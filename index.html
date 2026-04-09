@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -98,18 +99,110 @@ td{padding:8px 12px;border-bottom:1px solid #1e1e2e;vertical-align:middle}
 <body>
 <div class="wrap">
 <div class="nav-row" id="nav"></div>
-<div class="step on" id="s0"><div style="text-align:center;padding:24px 0 16px"><div style="display:inline-block;padding:3px 12px;border:1px solid #e50914;border-radius:20px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#ff4d57;margin-bottom:14px">AI 수업 실습</div><h1 style="font-size:28px;font-weight:900;margin-bottom:10px;line-height:1.3">나이브 베이즈<br>스팸 필터 실습</h1><p class="sub" style="max-width:460px;margin:0 auto 24px">이메일을 읽고 레이블과 키워드를 팀이 직접 결정합니다.<br>등장 횟수를 직접 세고, 확률을 직접 계산하면서 나이브 베이즈를 체험합니다!</p></div><div class="card" style="max-width:560px;margin:0 auto"><div style="font-weight:700;color:#fff;margin-bottom:6px">① 팀 번호 선택</div><div class="sub" style="margin-bottom:10px">팀 번호를 클릭하세요.</div><div class="team-grid" id="teamGrid"></div><div style="font-weight:700;color:#fff;margin-bottom:6px;margin-top:4px">② 팀별명 입력</div><div class="sub" style="margin-bottom:10px">팀만의 고유한 이름을 입력하세요. 팀 번호와 결합되어 식별자가 만들어집니다.<br><span style="color:#eab308">예: "불꽃" 입력 시 → <strong style="color:#fff">3팀_불꽃</strong></span></div><div style="display:flex;gap:8px;align-items:center;margin-bottom:16px"><input type="text" id="teamAlias" placeholder="팀별명 입력 (예: 불꽃, 해적단, 알파...)" style="background:#1e1e2e;border:1px solid #3a3a55;border-radius:7px;padding:9px 12px;color:#e8e8f0;font-family:inherit;font-size:14px;flex:1;outline:none" oninput="updatePreview()"></div><div style="padding:10px 14px;background:#111;border-radius:8px;border:1px solid #2a2a3e;margin-bottom:14px;font-size:13px;color:#94a3b8">팀 식별자 미리보기: <strong style="color:#ff4d57;font-size:15px" id="namePreview">—</strong></div><div style="text-align:center"><button class="btn red" id="startBtn" onclick="startApp()" disabled style="opacity:.35">시작하기 &rarr;</button></div></div><div style="text-align:center;margin-top:16px"><button class="btn blue" onclick="goStep(7)">📊 전체 팀 결과 보기</button></div></div>
+<div class="step on" id="s0"><div style="text-align:center;padding:24px 0 16px"><div style="display:inline-block;padding:3px 12px;border:1px solid #e50914;border-radius:20px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#ff4d57;margin-bottom:14px">AI 수업 실습</div><h1 style="font-size:28px;font-weight:900;margin-bottom:10px;line-height:1.3">나이브 베이즈<br>스팸 필터 실습</h1><p class="sub" style="max-width:460px;margin:0 auto 24px">이메일을 읽고 레이블과 키워드를 팀이 직접 결정합니다.<br>등장 횟수를 직접 세고, 확률을 직접 계산하면서 나이브 베이즈를 체험합니다!</p></div><div class="card" style="max-width:540px;margin:0 auto"><div style="font-weight:700;color:#fff;margin-bottom:14px">우리 팀 번호를 선택하세요</div><div class="team-grid" id="teamGrid"></div><div style="display:flex;gap:8px;align-items:center;margin-bottom:14px"><input type="text" id="customName" placeholder="직접 입력 (예: 특별팀)" style="background:#1e1e2e;border:1px solid #3a3a55;border-radius:7px;padding:8px 12px;color:#e8e8f0;font-family:inherit;font-size:13px;flex:1;outline:none"><button class="btn gray" onclick="confirmCustom()">확인</button></div><div style="text-align:center"><button class="btn red" id="startBtn" onclick="startApp()" disabled style="opacity:.35">시작하기 &rarr;</button></div></div><div style="text-align:center;margin-top:16px"><button class="btn blue" onclick="goStep(7)">📊 전체 팀 결과 보기</button></div></div>
 <div class="step" id="s1"><div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap"><span class="tbadge" id="badge1"></span><h2 style="margin:0">이메일 읽기 &amp; 분류</h2></div>
-<div style="margin-left:auto;font-size:13px;color:#94a3b8;margin-bottom:8px">분류 완료: <span id="lcnt" style="color:#ff4d57;font-weight:700">0</span>/10</div><div class="sub">팀원들과 함께 읽고 스팸 / 정상 / 모르겠음을 결정하세요.</div><div class="warn">레이블은 이 단계에서만 설정합니다. 신중하게 결정하세요!</div><div class="email-grid"><div class="ecard" id="ec_E01"><div class="enum">E01</div><div class="esubj">📧 특별 할인! 지금 신청하면 경품 증정</div><div class="ebody">안녕하세요! 이번 주말까지만 진행되는 특별 행사입니다. 지금 신청하시면 경품을 드립니다. 서두르세요!</div><div class="lbtns"><button class="lbtn" id="lb_E01_spam" onclick="setLabel('E01','spam')">📛 스팸</button><button class="lbtn" id="lb_E01_ham"  onclick="setLabel('E01','ham')">✅ 정상</button><button class="lbtn" id="lb_E01_unk"  onclick="setLabel('E01','unk')">❓ 모르겠음</button></div></div>
-<div class="ecard" id="ec_E02"><div class="enum">E02</div><div class="esubj">📧 방과후 무료 강좌 신청 안내</div><div class="ebody">이번 학기 방과후 무료 특별 강좌 신청을 받습니다. 관심 있는 학생은 금요일까지 신청해 주세요.</div><div class="lbtns"><button class="lbtn" id="lb_E02_spam" onclick="setLabel('E02','spam')">📛 스팸</button><button class="lbtn" id="lb_E02_ham"  onclick="setLabel('E02','ham')">✅ 정상</button><button class="lbtn" id="lb_E02_unk"  onclick="setLabel('E02','unk')">❓ 모르겠음</button></div></div>
-<div class="ecard" id="ec_E03"><div class="enum">E03</div><div class="esubj">📧 이벤트 당첨! 지금 클릭하세요</div><div class="ebody">고객님께서 이벤트 경품 당첨자로 선정되셨습니다. 당첨 확인을 위해 지금 클릭하여 정보를 입력해 주세요.</div><div class="lbtns"><button class="lbtn" id="lb_E03_spam" onclick="setLabel('E03','spam')">📛 스팸</button><button class="lbtn" id="lb_E03_ham"  onclick="setLabel('E03','ham')">✅ 정상</button><button class="lbtn" id="lb_E03_unk"  onclick="setLabel('E03','unk')">❓ 모르겠음</button></div></div>
-<div class="ecard" id="ec_E04"><div class="enum">E04</div><div class="esubj">📧 수학여행 비용 납부 안내</div><div class="ebody">수학여행 비용 납부 기한이 다가왔습니다. 이번 주 금요일까지 납부해 주시기 바랍니다.</div><div class="lbtns"><button class="lbtn" id="lb_E04_spam" onclick="setLabel('E04','spam')">📛 스팸</button><button class="lbtn" id="lb_E04_ham"  onclick="setLabel('E04','ham')">✅ 정상</button><button class="lbtn" id="lb_E04_unk"  onclick="setLabel('E04','unk')">❓ 모르겠음</button></div></div>
-<div class="ecard" id="ec_E05"><div class="enum">E05</div><div class="esubj">📧 오늘만 무료! 지금 바로 신청</div><div class="ebody">오늘 하루만 무료로 제공되는 서비스입니다. 지금 바로 신청하시면 할인 혜택도 함께 드립니다.</div><div class="lbtns"><button class="lbtn" id="lb_E05_spam" onclick="setLabel('E05','spam')">📛 스팸</button><button class="lbtn" id="lb_E05_ham"  onclick="setLabel('E05','ham')">✅ 정상</button><button class="lbtn" id="lb_E05_unk"  onclick="setLabel('E05','unk')">❓ 모르겠음</button></div></div>
-<div class="ecard" id="ec_E06"><div class="enum">E06</div><div class="esubj">📧 학교 이벤트 행사 일정 공지</div><div class="ebody">이번 달 학교 이벤트 및 행사 일정을 안내합니다. 체육대회는 다음 주 화요일 진행 예정입니다.</div><div class="lbtns"><button class="lbtn" id="lb_E06_spam" onclick="setLabel('E06','spam')">📛 스팸</button><button class="lbtn" id="lb_E06_ham"  onclick="setLabel('E06','ham')">✅ 정상</button><button class="lbtn" id="lb_E06_unk"  onclick="setLabel('E06','unk')">❓ 모르겠음</button></div></div>
-<div class="ecard" id="ec_E07"><div class="enum">E07</div><div class="esubj">📧 100만원 경품 당첨 확인</div><div class="ebody">축하합니다! 귀하가 경품 행사 당첨자로 선정되셨습니다. 지금 클릭하여 당첨 확인을 해주세요.</div><div class="lbtns"><button class="lbtn" id="lb_E07_spam" onclick="setLabel('E07','spam')">📛 스팸</button><button class="lbtn" id="lb_E07_ham"  onclick="setLabel('E07','ham')">✅ 정상</button><button class="lbtn" id="lb_E07_unk"  onclick="setLabel('E07','unk')">❓ 모르겠음</button></div></div>
-<div class="ecard" id="ec_E08"><div class="enum">E08</div><div class="esubj">📧 동아리 신청 마감 안내</div><div class="ebody">2학기 동아리 신청이 이번 주 금요일 마감됩니다. 신청서를 담임 선생님께 제출해 주세요.</div><div class="lbtns"><button class="lbtn" id="lb_E08_spam" onclick="setLabel('E08','spam')">📛 스팸</button><button class="lbtn" id="lb_E08_ham"  onclick="setLabel('E08','ham')">✅ 정상</button><button class="lbtn" id="lb_E08_unk"  onclick="setLabel('E08','unk')">❓ 모르겠음</button></div></div>
-<div class="ecard" id="ec_E09"><div class="enum">E09</div><div class="esubj">📧 무료 상담 신청하고 혜택 받기</div><div class="ebody">지금 무료 상담을 신청하시면 특별 할인 혜택을 드립니다. 오늘만 가능한 이벤트이니 서두르세요!</div><div class="lbtns"><button class="lbtn" id="lb_E09_spam" onclick="setLabel('E09','spam')">📛 스팸</button><button class="lbtn" id="lb_E09_ham"  onclick="setLabel('E09','ham')">✅ 정상</button><button class="lbtn" id="lb_E09_unk"  onclick="setLabel('E09','unk')">❓ 모르겠음</button></div></div>
-<div class="ecard" id="ec_E10"><div class="enum">E10</div><div class="esubj">📧 급식 메뉴 특별 변경 안내</div><div class="ebody">이번 주 목요일 급식 메뉴가 특별 메뉴로 변경됩니다. 자세한 내용은 학교 홈페이지를 확인해 주세요.</div><div class="lbtns"><button class="lbtn" id="lb_E10_spam" onclick="setLabel('E10','spam')">📛 스팸</button><button class="lbtn" id="lb_E10_ham"  onclick="setLabel('E10','ham')">✅ 정상</button><button class="lbtn" id="lb_E10_unk"  onclick="setLabel('E10','unk')">❓ 모르겠음</button></div></div></div><div class="brow"><button class="btn gray" id="labelBackBtn" onclick="goStep(0)">&larr; 이전</button><button class="btn red" onclick="goToKw()">키워드 선택하기 &rarr;</button></div></div>
+<div style="margin-left:auto;font-size:13px;color:#94a3b8;margin-bottom:8px">분류 완료: <span id="lcnt" style="color:#ff4d57;font-weight:700">0</span>/10</div><div class="sub">팀원들과 함께 읽고 스팸 / 정상 / 모르겠음을 결정하세요.</div><div class="warn">레이블은 이 단계에서만 설정합니다. 신중하게 결정하세요!</div><div class="email-grid">
+<div class="ecard" id="ec_E01">
+  <div class="enum">E01</div>
+  <div class="esubj">📧 수학여행 비용 납부 안내</div>
+  <div class="ebody">수학여행 비용 납부 기한이 다가왔습니다. 이번 주 금요일까지 납부해 주시기 바랍니다.</div>
+  <div class="lbtns">
+    <button class="lbtn" id="lb_E01_spam" onclick="setLabel('E01','spam')">📛 스팸</button>
+    <button class="lbtn" id="lb_E01_ham"  onclick="setLabel('E01','ham')">✅ 정상</button>
+    <button class="lbtn" id="lb_E01_unk"  onclick="setLabel('E01','unk')">❓ 모르겠음</button>
+  </div>
+</div>
+<div class="ecard" id="ec_E02">
+  <div class="enum">E02</div>
+  <div class="esubj">📧 특별 할인! 지금 신청하면 경품 증정</div>
+  <div class="ebody">안녕하세요! 이번 주말까지만 진행되는 특별 행사입니다. 지금 신청하시면 경품을 드립니다. 서두르세요!</div>
+  <div class="lbtns">
+    <button class="lbtn" id="lb_E02_spam" onclick="setLabel('E02','spam')">📛 스팸</button>
+    <button class="lbtn" id="lb_E02_ham"  onclick="setLabel('E02','ham')">✅ 정상</button>
+    <button class="lbtn" id="lb_E02_unk"  onclick="setLabel('E02','unk')">❓ 모르겠음</button>
+  </div>
+</div>
+<div class="ecard" id="ec_E03">
+  <div class="enum">E03</div>
+  <div class="esubj">📧 100만원 경품 당첨 확인</div>
+  <div class="ebody">축하합니다! 귀하가 경품 행사 당첨자로 선정되셨습니다. 지금 클릭하여 당첨 확인을 해주세요.</div>
+  <div class="lbtns">
+    <button class="lbtn" id="lb_E03_spam" onclick="setLabel('E03','spam')">📛 스팸</button>
+    <button class="lbtn" id="lb_E03_ham"  onclick="setLabel('E03','ham')">✅ 정상</button>
+    <button class="lbtn" id="lb_E03_unk"  onclick="setLabel('E03','unk')">❓ 모르겠음</button>
+  </div>
+</div>
+<div class="ecard" id="ec_E04">
+  <div class="enum">E04</div>
+  <div class="esubj">📧 학교 이벤트 행사 일정 공지</div>
+  <div class="ebody">이번 달 학교 이벤트 및 행사 일정을 안내합니다. 체육대회는 다음 주 화요일 진행 예정입니다.</div>
+  <div class="lbtns">
+    <button class="lbtn" id="lb_E04_spam" onclick="setLabel('E04','spam')">📛 스팸</button>
+    <button class="lbtn" id="lb_E04_ham"  onclick="setLabel('E04','ham')">✅ 정상</button>
+    <button class="lbtn" id="lb_E04_unk"  onclick="setLabel('E04','unk')">❓ 모르겠음</button>
+  </div>
+</div>
+<div class="ecard" id="ec_E05">
+  <div class="enum">E05</div>
+  <div class="esubj">📧 이벤트 당첨! 지금 클릭하세요</div>
+  <div class="ebody">고객님께서 이벤트 경품 당첨자로 선정되셨습니다. 당첨 확인을 위해 지금 클릭하여 정보를 입력해 주세요.</div>
+  <div class="lbtns">
+    <button class="lbtn" id="lb_E05_spam" onclick="setLabel('E05','spam')">📛 스팸</button>
+    <button class="lbtn" id="lb_E05_ham"  onclick="setLabel('E05','ham')">✅ 정상</button>
+    <button class="lbtn" id="lb_E05_unk"  onclick="setLabel('E05','unk')">❓ 모르겠음</button>
+  </div>
+</div>
+<div class="ecard" id="ec_E06">
+  <div class="enum">E06</div>
+  <div class="esubj">📧 급식 메뉴 특별 변경 안내</div>
+  <div class="ebody">이번 주 목요일 급식 메뉴가 특별 메뉴로 변경됩니다. 자세한 내용은 학교 홈페이지를 확인해 주세요.</div>
+  <div class="lbtns">
+    <button class="lbtn" id="lb_E06_spam" onclick="setLabel('E06','spam')">📛 스팸</button>
+    <button class="lbtn" id="lb_E06_ham"  onclick="setLabel('E06','ham')">✅ 정상</button>
+    <button class="lbtn" id="lb_E06_unk"  onclick="setLabel('E06','unk')">❓ 모르겠음</button>
+  </div>
+</div>
+<div class="ecard" id="ec_E07">
+  <div class="enum">E07</div>
+  <div class="esubj">📧 동아리 신청 마감 안내</div>
+  <div class="ebody">2학기 동아리 신청이 이번 주 금요일 마감됩니다. 신청서를 담임 선생님께 제출해 주세요.</div>
+  <div class="lbtns">
+    <button class="lbtn" id="lb_E07_spam" onclick="setLabel('E07','spam')">📛 스팸</button>
+    <button class="lbtn" id="lb_E07_ham"  onclick="setLabel('E07','ham')">✅ 정상</button>
+    <button class="lbtn" id="lb_E07_unk"  onclick="setLabel('E07','unk')">❓ 모르겠음</button>
+  </div>
+</div>
+<div class="ecard" id="ec_E08">
+  <div class="enum">E08</div>
+  <div class="esubj">📧 오늘만 무료! 지금 바로 신청</div>
+  <div class="ebody">오늘 하루만 무료로 제공되는 서비스입니다. 지금 바로 신청하시면 할인 혜택도 함께 드립니다.</div>
+  <div class="lbtns">
+    <button class="lbtn" id="lb_E08_spam" onclick="setLabel('E08','spam')">📛 스팸</button>
+    <button class="lbtn" id="lb_E08_ham"  onclick="setLabel('E08','ham')">✅ 정상</button>
+    <button class="lbtn" id="lb_E08_unk"  onclick="setLabel('E08','unk')">❓ 모르겠음</button>
+  </div>
+</div>
+<div class="ecard" id="ec_E09">
+  <div class="enum">E09</div>
+  <div class="esubj">📧 방과후 무료 강좌 신청 안내</div>
+  <div class="ebody">이번 학기 방과후 무료 특별 강좌 신청을 받습니다. 관심 있는 학생은 금요일까지 신청해 주세요.</div>
+  <div class="lbtns">
+    <button class="lbtn" id="lb_E09_spam" onclick="setLabel('E09','spam')">📛 스팸</button>
+    <button class="lbtn" id="lb_E09_ham"  onclick="setLabel('E09','ham')">✅ 정상</button>
+    <button class="lbtn" id="lb_E09_unk"  onclick="setLabel('E09','unk')">❓ 모르겠음</button>
+  </div>
+</div>
+<div class="ecard" id="ec_E10">
+  <div class="enum">E10</div>
+  <div class="esubj">📧 무료 상담 신청하고 혜택 받기</div>
+  <div class="ebody">지금 무료 상담을 신청하시면 특별 할인 혜택을 드립니다. 오늘만 가능한 이벤트이니 서두르세요!</div>
+  <div class="lbtns">
+    <button class="lbtn" id="lb_E10_spam" onclick="setLabel('E10','spam')">📛 스팸</button>
+    <button class="lbtn" id="lb_E10_ham"  onclick="setLabel('E10','ham')">✅ 정상</button>
+    <button class="lbtn" id="lb_E10_unk"  onclick="setLabel('E10','unk')">❓ 모르겠음</button>
+  </div>
+</div>
+</div><div class="brow"><button class="btn gray" id="labelBackBtn" onclick="goStep(0)">&larr; 이전</button><button class="btn red" onclick="goToKw()">키워드 선택하기 &rarr;</button></div></div>
 <div class="step" id="s2"><div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap"><span class="tbadge" id="badge2"></span><h2 style="margin:0">키워드 선택</h2></div>
 <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><div style="margin-left:auto;font-size:14px;font-weight:700">선택: <span id="kwcnt" style="color:#ff4d57">0</span>/5</div></div><div class="sub">스팸 판별에 유용한 단어 <strong style="color:#fff">5개</strong>를 팀원들과 의논하여 선택하세요.<br><span style="color:#eab308">⚠ 등장 횟수는 다음 단계에서 직접 세어봅니다. 등장 횟수는 지금 표시되지 않습니다!</span></div><div id="prevRound"></div><div class="card"><div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:6px">선택한 키워드</div><div class="sp" id="selPreview"><span style="font-size:12px;color:#333">아래 단어를 클릭하여 선택하세요.</span></div><div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:7px">이메일 본문 추출 단어</div><div class="wcloud" id="wcloud"><div class="wtoken" id="wt_0" onclick="toggleKw(0)">지금<span class="wchk">✓</span></div>
 <div class="wtoken" id="wt_1" onclick="toggleKw(1)">클릭<span class="wchk">✓</span></div>
@@ -127,30 +220,27 @@ td{padding:8px 12px;border-bottom:1px solid #1e1e2e;vertical-align:middle}
 <div class="wtoken" id="wt_13" onclick="toggleKw(13)">공지<span class="wchk">✓</span></div>
 <div class="wtoken" id="wt_14" onclick="toggleKw(14)">급식<span class="wchk">✓</span></div></div><div style="margin-top:12px;padding-top:12px;border-top:1px solid #2a2a3e"><div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:6px">기타 — 직접 단어 추가</div><div style="display:flex;gap:7px;align-items:center"><input type="text" id="customKwInput" placeholder="본문에서 직접 입력 (등장 횟수는 다음 단계에서 직접 세어봅니다)" style="background:#1e1e2e;border:1px solid #3a3a55;border-radius:7px;padding:7px 10px;color:#e8e8f0;font-family:inherit;font-size:13px;flex:1;outline:none" onkeydown="if(event.key==='Enter')addCustomWord()"><button onclick="addCustomWord()" style="padding:7px 16px;border-radius:7px;border:none;background:#e50914;color:#fff;font-size:13px;font-weight:700;cursor:pointer">추가</button></div><div class="wcloud" id="custCloud" style="margin-top:8px"></div></div><div style="font-size:11px;color:#333;margin-top:6px">* 제시 단어 + 기타 합쳐서 최대 5개</div></div><div class="brow"><button class="btn gray" onclick="goStep(1)">&larr; 레이블링 수정</button><button class="btn red" onclick="goToCount()">등장 횟수 세기 &rarr;</button></div></div>
 <div class="step" id="s3"><div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap"><span class="tbadge" id="badge3"></span><h2 style="margin:0">✏️ 등장 횟수 직접 세기</h2></div>
-<div class="sub">선택한 키워드가 스팸/정상 이메일에 각각 몇 번 등장하는지 직접 세어 입력하세요.<br><strong style="color:#fff">이메일 목록 버튼을 눌러 본문을 확인할 수 있습니다.</strong></div><div id="countContent"></div><div class="brow"><button class="btn gray" onclick="goBackToKw()">&larr; 키워드 다시 선택</button><button class="btn green" onclick="checkCounts()">✓ 채점하기</button><button class="btn red" onclick="goToProbCalc()">확률 계산하기 &rarr;</button></div></div>
+<div class="sub">선택한 키워드가 스팸/정상 이메일에 각각 몇 번 등장하는지 직접 세어 입력하세요.<br><strong style="color:#fff">이메일 목록 버튼을 눌러 본문을 확인할 수 있습니다.</strong></div><div id="countContent"></div><div class="brow"><button class="btn gray" onclick="goBackToKw()">&larr; 키워드 다시 선택</button><button class="btn green" onclick="checkCounts()">✓ 채점하기</button><button class="btn red" id="toProb" onclick="goToProbCalc()" disabled style="opacity:.35">확률 계산하기 &rarr;</button></div></div>
 <div class="step" id="s4"><div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap"><span class="tbadge" id="badge4"></span><h2 style="margin:0">🧮 확률 직접 계산하기</h2></div>
-<div class="sub">채점된 등장 횟수를 이용해 조건부 확률을 직접 계산하고 입력하세요.<br><strong style="color:#fff">소수점 셋째 자리까지 입력하세요. (허용 오차 ±0.01)</strong></div><div id="probContent"></div><div class="brow"><button class="btn gray" onclick="goStep(3)">&larr; 이전</button><button class="btn green" onclick="checkProbs()">✓ 채점하기</button><button class="btn red" onclick="goToTest()">테스트 결과 보기 &rarr;</button></div></div>
+<div class="sub">채점된 등장 횟수를 이용해 조건부 확률을 직접 계산하고 입력하세요.<br><strong style="color:#fff">소수점 셋째 자리까지 입력하세요. (허용 오차 ±0.01)</strong></div><div id="probContent"></div><div class="brow"><button class="btn gray" onclick="goStep(3)">&larr; 이전</button><button class="btn green" onclick="checkProbs()">✓ 채점하기</button><button class="btn red" id="toTest" onclick="goToTest()" disabled style="opacity:.35">테스트 결과 보기 &rarr;</button></div></div>
 <div class="step" id="s5"><div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap"><span class="tbadge" id="badge5"></span><h2 style="margin:0">테스트 결과</h2></div>
-<div class="sub"><span style="color:#f97316">단일 키워드</span> vs <span style="color:#ff4d57">나이브 베이즈</span> 정확도를 확인하세요.</div><div class="card" style="margin-bottom:14px"><div style="font-weight:700;color:#fff;margin-bottom:10px">🎚️ 사전 확률 P(스팸) 조절</div><div class="sub" style="margin-bottom:12px">슬라이더를 움직이면 판정이 실시간으로 바뀝니다. 사전 확률이 낮으면 웬만해선 정상으로, 높으면 웬만해선 스팸으로 판정합니다.</div><div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><span style="font-size:12px;color:#22c55e;font-weight:700;text-align:center">정상 多<br>P(스팸)=0.1</span><input type="range" id="priorSlider" min="1" max="9" value="5" step="1" oninput="onPriorChange()" style="flex:1;min-width:120px;accent-color:#ff4d57;cursor:pointer;height:6px"><span style="font-size:12px;color:#ef4444;font-weight:700;text-align:center">스팸 多<br>P(스팸)=0.9</span></div><div style="display:flex;justify-content:center;margin-top:12px;gap:24px;flex-wrap:wrap"><div style="text-align:center"><div style="font-size:11px;color:#94a3b8;margin-bottom:2px">현재 P(스팸)</div><div style="font-size:26px;font-weight:900;color:#ff4d57" id="priorDisplay">0.5</div></div><div style="text-align:center"><div style="font-size:11px;color:#94a3b8;margin-bottom:2px">현재 P(정상)</div><div style="font-size:26px;font-weight:900;color:#22c55e" id="priorHDisplay">0.5</div></div><div style="text-align:center"><div style="font-size:11px;color:#94a3b8;margin-bottom:2px">판정 바뀐 이메일</div><div style="font-size:26px;font-weight:900;color:#eab308" id="changedCount">—</div></div></div><div id="priorChangedBox" style="margin-top:10px"></div></div><div id="calcScores"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px"><div style="padding:16px;border-radius:10px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);text-align:center"><div style="font-size:11px;color:#f97316;margin-bottom:4px">단일 키워드</div><div style="font-size:36px;font-weight:900;color:#f97316" id="acc1">—</div><div style="font-size:11px;color:#555" id="bestWordDisp">대표: —</div></div><div style="padding:16px;border-radius:10px;background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.3);text-align:center"><div style="font-size:11px;color:#ff4d57;margin-bottom:4px">나이브 베이즈</div><div style="font-size:36px;font-weight:900;color:#ff4d57" id="acc2">—</div><div style="font-size:11px;color:#555" id="kwDisp">키워드: —</div></div></div><div id="roundLogBox"></div><div class="card"><div style="overflow-x:auto"><table><thead><tr><th rowspan="2">번호</th><th rowspan="2">이메일</th><th rowspan="2">실제</th><th rowspan="2">포함 단어</th><th colspan="2" style="text-align:center;color:#f97316">단일</th><th colspan="2" style="text-align:center;color:#ff4d57">나이브 베이즈</th></tr><tr><th style="color:#f97316;font-size:9px">판정</th><th style="color:#f97316;font-size:9px">확률</th><th style="color:#ff4d57;font-size:9px">판정</th><th style="color:#ff4d57;font-size:9px">확률</th></tr></thead><tbody id="testBody"></tbody></table></div></div><div class="brow"><button class="btn gray" onclick="goBackToKw()">&larr; 키워드 수정하기</button><button class="btn red" onclick="submitResult()">이 결과로 제출 &rarr;</button></div></div>
+<div class="sub"><span style="color:#f97316">단일 키워드</span> vs <span style="color:#ff4d57">나이브 베이즈</span> 정확도를 확인하세요.</div><div id="calcScores"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px"><div style="padding:16px;border-radius:10px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);text-align:center"><div style="font-size:11px;color:#f97316;margin-bottom:4px">단일 키워드</div><div style="font-size:36px;font-weight:900;color:#f97316" id="acc1">—</div><div style="font-size:11px;color:#555" id="bestWordDisp">대표: —</div></div><div style="padding:16px;border-radius:10px;background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.3);text-align:center"><div style="font-size:11px;color:#ff4d57;margin-bottom:4px">나이브 베이즈</div><div style="font-size:36px;font-weight:900;color:#ff4d57" id="acc2">—</div><div style="font-size:11px;color:#555" id="kwDisp">키워드: —</div></div></div><div id="roundLogBox"></div><div class="card"><div style="overflow-x:auto"><table><thead><tr><th rowspan="2">번호</th><th rowspan="2">이메일</th><th rowspan="2">실제</th><th rowspan="2">포함 단어</th><th colspan="2" style="text-align:center;color:#f97316">단일</th><th colspan="2" style="text-align:center;color:#ff4d57">나이브 베이즈</th></tr><tr><th style="color:#f97316;font-size:9px">판정</th><th style="color:#f97316;font-size:9px">확률</th><th style="color:#ff4d57;font-size:9px">판정</th><th style="color:#ff4d57;font-size:9px">확률</th></tr></thead><tbody id="testBody"></tbody></table></div></div><div class="brow"><button class="btn gray" onclick="goBackToKw()">&larr; 키워드 수정하기</button><button class="btn red" onclick="submitResult()">이 결과로 제출 &rarr;</button></div></div>
 <div class="step" id="s6"><div style="text-align:center;padding:32px 0"><div style="font-size:48px;margin-bottom:16px">✅</div><h2 style="font-size:22px;margin-bottom:8px" id="submitMsg">제출 완료!</h2><p class="sub" id="submitSub" style="margin-bottom:20px"></p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn blue" onclick="goStep(7)">📊 전체 팀 결과 보기</button><button class="btn gray" onclick="resetAll()">&#x21BA; 처음으로 (다른 팀)</button></div></div></div>
 <div class="step" id="s7"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px"><h2 style="margin:0">📊 전체 팀 결과</h2><div style="display:flex;gap:7px"><button class="btn blue" onclick="loadAllResults()">🔄 새로고침</button><button class="btn gray" onclick="goStep(0)">&larr; 돌아가기</button></div></div><div class="sub">나이브 베이즈 정확도 순으로 정렬됩니다. 등장횟수·확률 채점 점수도 확인할 수 있습니다.</div><div id="allResultsOut"><div class="loading">결과를 불러오는 중...</div></div></div>
 </div>
 <script>
 
-// === 사전 확률 ===
-var priorS = 0.5;
-
 // === Apps Script URL ===
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyp9MkDja2bgA4W-Rxdv1wFBA2aEXsOWevN9En2c_SwelgzHWR8PxDPfTUBWw8y-3E/exec';
+var SCRIPT_URL = ‘https://script.google.com/macros/s/AKfycbyp9MkDja2bgA4W-Rxdv1wFBA2aEXsOWevN9En2c_SwelgzHWR8PxDPfTUBWw8y-3E/exec’;
 
 // === 데이터 ===
-var EM   = [{"id": "E01", "subject": "특별 할인! 지금 신청하면 경품 증정", "body": "안녕하세요! 이번 주말까지만 진행되는 특별 행사입니다. 지금 신청하시면 경품을 드립니다. 서두르세요!", "official": "스팸", "words": ["특별", "지금", "신청", "경품"]}, {"id": "E02", "subject": "방과후 무료 강좌 신청 안내", "body": "이번 학기 방과후 무료 특별 강좌 신청을 받습니다. 관심 있는 학생은 금요일까지 신청해 주세요.", "official": "정상", "words": ["방과후", "무료", "특별", "신청", "안내"]}, {"id": "E03", "subject": "이벤트 당첨! 지금 클릭하세요", "body": "고객님께서 이벤트 경품 당첨자로 선정되셨습니다. 당첨 확인을 위해 지금 클릭하여 정보를 입력해 주세요.", "official": "스팸", "words": ["이벤트", "경품", "당첨", "지금", "클릭"]}, {"id": "E04", "subject": "수학여행 비용 납부 안내", "body": "수학여행 비용 납부 기한이 다가왔습니다. 이번 주 금요일까지 납부해 주시기 바랍니다.", "official": "정상", "words": ["안내"]}, {"id": "E05", "subject": "오늘만 무료! 지금 바로 신청", "body": "오늘 하루만 무료로 제공되는 서비스입니다. 지금 바로 신청하시면 할인 혜택도 함께 드립니다.", "official": "스팸", "words": ["무료", "지금", "신청", "할인"]}, {"id": "E06", "subject": "학교 이벤트 행사 일정 공지", "body": "이번 달 학교 이벤트 및 행사 일정을 안내합니다. 체육대회는 다음 주 화요일 진행 예정입니다.", "official": "정상", "words": ["학교", "이벤트", "행사", "공지", "안내"]}, {"id": "E07", "subject": "100만원 경품 당첨 확인", "body": "축하합니다! 귀하가 경품 행사 당첨자로 선정되셨습니다. 지금 클릭하여 당첨 확인을 해주세요.", "official": "스팸", "words": ["경품", "당첨", "지금", "클릭", "행사"]}, {"id": "E08", "subject": "동아리 신청 마감 안내", "body": "2학기 동아리 신청이 이번 주 금요일 마감됩니다. 신청서를 담임 선생님께 제출해 주세요.", "official": "정상", "words": ["신청", "마감", "안내"]}, {"id": "E09", "subject": "무료 상담 신청하고 혜택 받기", "body": "지금 무료 상담을 신청하시면 특별 할인 혜택을 드립니다. 오늘만 가능한 이벤트이니 서두르세요!", "official": "스팸", "words": ["무료", "신청", "특별", "할인", "이벤트", "지금"]}, {"id": "E10", "subject": "급식 메뉴 특별 변경 안내", "body": "이번 주 목요일 급식 메뉴가 특별 메뉴로 변경됩니다. 자세한 내용은 학교 홈페이지를 확인해 주세요.", "official": "정상", "words": ["급식", "특별", "안내", "학교"]}];
-var TS   = [{"id": "T1", "text": "무료 강습 신청 안내", "label": "정상", "words": ["무료", "신청", "안내"]}, {"id": "T2", "text": "이벤트 경품 당첨 클릭", "label": "스팸", "words": ["이벤트", "경품", "당첨", "클릭"]}, {"id": "T3", "text": "학교 특별 행사 이벤트 안내", "label": "정상", "words": ["학교", "특별", "행사", "이벤트", "안내"]}, {"id": "T4", "text": "지금 바로 무료 신청하세요", "label": "스팸", "words": ["지금", "무료", "신청"]}, {"id": "T5", "text": "동아리 마감 안내 공지", "label": "정상", "words": ["마감", "안내", "공지"]}, {"id": "T6", "text": "할인 이벤트 지금 클릭 당첨", "label": "스팸", "words": ["할인", "이벤트", "지금", "클릭", "당첨"]}];
-var WDS  = ["지금", "클릭", "당첨", "경품", "무료", "신청", "이벤트", "특별", "할인", "마감", "안내", "학교", "행사", "공지", "급식"];
-var STEPS = ['팀선택','레이블링','키워드선택','등장횟수세기','확률계산','테스트','제출완료','전체결과'];
+var EM   = [{“id”: “E01”, “subject”: “수학여행 비용 납부 안내”, “body”: “수학여행 비용 납부 기한이 다가왔습니다. 이번 주 금요일까지 납부해 주시기 바랍니다.”, “official”: “정상”, “words”: [“안내”]}, {“id”: “E02”, “subject”: “특별 할인! 지금 신청하면 경품 증정”, “body”: “안녕하세요! 이번 주말까지만 진행되는 특별 행사입니다. 지금 신청하시면 경품을 드립니다. 서두르세요!”, “official”: “스팸”, “words”: [“특별”, “지금”, “신청”, “경품”]}, {“id”: “E03”, “subject”: “100만원 경품 당첨 확인”, “body”: “축하합니다! 귀하가 경품 행사 당첨자로 선정되셨습니다. 지금 클릭하여 당첨 확인을 해주세요.”, “official”: “스팸”, “words”: [“경품”, “당첨”, “지금”, “클릭”, “행사”]}, {“id”: “E04”, “subject”: “학교 이벤트 행사 일정 공지”, “body”: “이번 달 학교 이벤트 및 행사 일정을 안내합니다. 체육대회는 다음 주 화요일 진행 예정입니다.”, “official”: “정상”, “words”: [“학교”, “이벤트”, “행사”, “공지”, “안내”]}, {“id”: “E05”, “subject”: “이벤트 당첨! 지금 클릭하세요”, “body”: “고객님께서 이벤트 경품 당첨자로 선정되셨습니다. 당첨 확인을 위해 지금 클릭하여 정보를 입력해 주세요.”, “official”: “스팸”, “words”: [“이벤트”, “경품”, “당첨”, “지금”, “클릭”]}, {“id”: “E06”, “subject”: “급식 메뉴 특별 변경 안내”, “body”: “이번 주 목요일 급식 메뉴가 특별 메뉴로 변경됩니다. 자세한 내용은 학교 홈페이지를 확인해 주세요.”, “official”: “정상”, “words”: [“급식”, “특별”, “안내”, “학교”]}, {“id”: “E07”, “subject”: “동아리 신청 마감 안내”, “body”: “2학기 동아리 신청이 이번 주 금요일 마감됩니다. 신청서를 담임 선생님께 제출해 주세요.”, “official”: “정상”, “words”: [“신청”, “마감”, “안내”]}, {“id”: “E08”, “subject”: “오늘만 무료! 지금 바로 신청”, “body”: “오늘 하루만 무료로 제공되는 서비스입니다. 지금 바로 신청하시면 할인 혜택도 함께 드립니다.”, “official”: “스팸”, “words”: [“무료”, “지금”, “신청”, “할인”]}, {“id”: “E09”, “subject”: “방과후 무료 강좌 신청 안내”, “body”: “이번 학기 방과후 무료 특별 강좌 신청을 받습니다. 관심 있는 학생은 금요일까지 신청해 주세요.”, “official”: “정상”, “words”: [“방과후”, “무료”, “특별”, “신청”, “안내”]}, {“id”: “E10”, “subject”: “무료 상담 신청하고 혜택 받기”, “body”: “지금 무료 상담을 신청하시면 특별 할인 혜택을 드립니다. 오늘만 가능한 이벤트이니 서두르세요!”, “official”: “스팸”, “words”: [“무료”, “신청”, “특별”, “할인”, “이벤트”, “지금”]}];
+var TS   = [{“id”: “T1”, “text”: “무료 강습 신청 안내”, “label”: “정상”, “words”: [“무료”, “신청”, “안내”]}, {“id”: “T2”, “text”: “이벤트 경품 당첨 클릭”, “label”: “스팸”, “words”: [“이벤트”, “경품”, “당첨”, “클릭”]}, {“id”: “T3”, “text”: “학교 특별 행사 이벤트 안내”, “label”: “정상”, “words”: [“학교”, “특별”, “행사”, “이벤트”, “안내”]}, {“id”: “T4”, “text”: “지금 바로 무료 신청하세요”, “label”: “스팸”, “words”: [“지금”, “무료”, “신청”]}, {“id”: “T5”, “text”: “동아리 마감 안내 공지”, “label”: “정상”, “words”: [“마감”, “안내”, “공지”]}, {“id”: “T6”, “text”: “할인 이벤트 지금 클릭 당첨”, “label”: “스팸”, “words”: [“할인”, “이벤트”, “지금”, “클릭”, “당첨”]}];
+var WDS  = [“지금”, “클릭”, “당첨”, “경품”, “무료”, “신청”, “이벤트”, “특별”, “할인”, “마감”, “안내”, “학교”, “행사”, “공지”, “급식”];
+var STEPS = [‘팀선택’,‘레이블링’,‘키워드선택’,‘등장횟수세기’,‘확률계산’,‘테스트’,‘제출완료’,‘전체결과’];
 
 // === 상태 ===
-var teamName  = '';
+var teamName  = ‘’;
 var lblMap    = {};
 var lblLocked = false;
 var selIdx    = [];
@@ -166,888 +256,821 @@ var probScoreData = null;
 
 // === 네비게이션 ===
 function buildNav() {
-  var h = '';
-  for (var i = 0; i < STEPS.length; i++) {
-    var cls = (i === curStep) ? 'nbtn on' : 'nbtn done';
-    h += '<button class="' + cls + '" onclick="goStep(' + i + ')">' + STEPS[i] + '</button>';
-  }
-  document.getElementById('nav').innerHTML = h;
+var h = ‘’;
+for (var i = 0; i < STEPS.length; i++) {
+var cls = (i === curStep) ? ‘nbtn on’ : ‘nbtn done’;
+h += ‘<button class="' + cls + '" onclick="goStep(' + i + ')">’ + STEPS[i] + ‘</button>’;
+}
+document.getElementById(‘nav’).innerHTML = h;
 }
 function goStep(n) {
-  curStep = n;
-  for (var i = 0; i < 8; i++) {
-    var el = document.getElementById('s' + i);
-    if (el) el.className = 'step' + (i === n ? ' on' : '');
-  }
-  buildNav();
-  if (n === 7) loadAllResults();
-  window.scrollTo(0, 0);
+curStep = n;
+for (var i = 0; i < 8; i++) {
+var el = document.getElementById(‘s’ + i);
+if (el) el.className = ‘step’ + (i === n ? ’ on’ : ‘’);
+}
+buildNav();
+if (n === 7) loadAllResults();
+window.scrollTo(0, 0);
 }
 buildNav();
 
 // === 팀 선택 ===
 (function() {
-  var h = '';
-  for (var i = 1; i <= 10; i++) {
-    h += '<button class="tbtn" id="tbtn' + i + '" onclick="pickTeam(' + i + ')">' + i + '팀</button>';
-  }
-  document.getElementById('teamGrid').innerHTML = h;
+var h = ‘’;
+for (var i = 1; i <= 10; i++) {
+h += ‘<button class="tbtn" id="tbtn' + i + '" onclick="pickTeam(' + i + ')">’ + i + ‘팀</button>’;
+}
+document.getElementById(‘teamGrid’).innerHTML = h;
 })();
 
-var pickedNum = 0;
-
 function pickTeam(n) {
-  pickedNum = n;
-  document.querySelectorAll('.tbtn').forEach(function(b) { b.classList.remove('sel'); });
-  var btn = document.getElementById('tbtn' + n);
-  if (btn) btn.classList.add('sel');
-  updatePreview();
+teamName = n + ‘팀’;
+document.querySelectorAll(’.tbtn’).forEach(function(b) { b.classList.remove(‘sel’); });
+var btn = document.getElementById(‘tbtn’ + n);
+if (btn) btn.classList.add(‘sel’);
+document.getElementById(‘customName’).value = ‘’;
+activateStart();
 }
-
-function updatePreview() {
-  var alias = document.getElementById('teamAlias').value.trim();
-  var prev  = document.getElementById('namePreview');
-  if (!pickedNum) { if (prev) prev.innerText = '팀 번호를 먼저 선택하세요'; return; }
-  var name = pickedNum + '팀' + (alias ? '_' + alias : '');
-  if (prev) prev.innerText = name;
-  teamName = name;
-  // 팀 번호와 팀별명 모두 있을 때만 활성화
-  if (alias) activateStart();
-  else {
-    var sb = document.getElementById('startBtn');
-    if (sb) { sb.disabled = true; sb.style.opacity = '0.35'; }
-  }
+function confirmCustom() {
+var v = document.getElementById(‘customName’).value.trim();
+if (!v) return;
+teamName = v;
+document.querySelectorAll(’.tbtn’).forEach(function(b) { b.classList.remove(‘sel’); });
+activateStart();
 }
 function activateStart() {
-  var btn = document.getElementById('startBtn');
-  if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+var btn = document.getElementById(‘startBtn’);
+if (btn) { btn.disabled = false; btn.style.opacity = ‘1’; }
 }
 function startApp() {
-  if (!teamName) return;
-  refreshAllBadges();
-  lblLocked = false;
-  enableLabelBack();
-  goStep(1);
+if (!teamName) return;
+refreshAllBadges();
+lblLocked = false;
+enableLabelBack();
+goStep(1);
 }
 function refreshAllBadges() {
-  var txt = teamName + (roundNum > 0 ? '  ·  ' + roundNum + '회차' : '');
-  ['badge1','badge2','badge3','badge4','badge5','badge6'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.innerText = (id === 'badge1') ? teamName : txt;
-  });
+var txt = teamName + (roundNum > 0 ? ’  ·  ’ + roundNum + ‘회차’ : ‘’);
+[‘badge1’,‘badge2’,‘badge3’,‘badge4’,‘badge5’,‘badge6’].forEach(function(id) {
+var el = document.getElementById(id);
+if (el) el.innerText = (id === ‘badge1’) ? teamName : txt;
+});
 }
 
 // === 레이블링 ===
 function setLabel(eid, val) {
-  if (lblLocked) return;
-  lblMap[eid] = val;
-  var cls = { spam: 'lbtn spam', ham: 'lbtn ham', unk: 'lbtn unk' };
-  ['spam','ham','unk'].forEach(function(k) {
-    var btn = document.getElementById('lb_' + eid + '_' + k);
-    if (btn) btn.className = (k === val) ? cls[k] : 'lbtn';
-  });
-  document.getElementById('lcnt').innerText = Object.keys(lblMap).length;
+if (lblLocked) return;
+lblMap[eid] = val;
+var cls = { spam: ‘lbtn spam’, ham: ‘lbtn ham’, unk: ‘lbtn unk’ };
+[‘spam’,‘ham’,‘unk’].forEach(function(k) {
+var btn = document.getElementById(‘lb_’ + eid + ‘_’ + k);
+if (btn) btn.className = (k === val) ? cls[k] : ‘lbtn’;
+});
+document.getElementById(‘lcnt’).innerText = Object.keys(lblMap).length;
 }
 function goToKw() {
-  if (Object.keys(lblMap).length < 5) { alert('이메일을 5개 이상 분류해 주세요.'); return; }
-  lblLocked = true;
-  disableLabelBack();
-  roundNum = 1;
-  refreshAllBadges();
-  showPrevRound();
-  goStep(2);
+if (Object.keys(lblMap).length < 5) { alert(‘이메일을 5개 이상 분류해 주세요.’); return; }
+lblLocked = true;
+disableLabelBack();
+roundNum = 1;
+refreshAllBadges();
+showPrevRound();
+goStep(2);
 }
 function disableLabelBack() {
-  var btn = document.getElementById('labelBackBtn');
-  if (btn) { btn.disabled = true; btn.style.opacity = '0.35'; }
+var btn = document.getElementById(‘labelBackBtn’);
+if (btn) { btn.disabled = true; btn.style.opacity = ‘0.35’; }
 }
 function enableLabelBack() {
-  var btn = document.getElementById('labelBackBtn');
-  if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+var btn = document.getElementById(‘labelBackBtn’);
+if (btn) { btn.disabled = false; btn.style.opacity = ‘1’; }
 }
 
 // === 키워드 선택 ===
 function totalSelected() { return selIdx.length + custList.length; }
 function getAllWords() {
-  var ws = [];
-  selIdx.forEach(function(wi) { ws.push(WDS[wi]); });
-  custList.forEach(function(c) { ws.push(c.word); });
-  return ws;
+var ws = [];
+selIdx.forEach(function(wi) { ws.push(WDS[wi]); });
+custList.forEach(function(c) { ws.push(c.word); });
+return ws;
 }
 function updateKwCounter() {
-  var el = document.getElementById('kwcnt');
-  if (el) el.innerText = totalSelected();
+var el = document.getElementById(‘kwcnt’);
+if (el) el.innerText = totalSelected();
 }
 function renderSelPreview() {
-  var all = getAllWords();
-  var el = document.getElementById('selPreview');
-  if (!el) return;
-  if (!all.length) {
-    el.innerHTML = '<span style="font-size:12px;color:#333">아래 단어를 클릭하여 선택하세요.</span>';
-    return;
-  }
-  el.innerHTML = all.map(function(w) {
-    return '<span class="sp-tag">' + w + '</span>';
-  }).join('');
+var all = getAllWords();
+var el = document.getElementById(‘selPreview’);
+if (!el) return;
+if (!all.length) {
+el.innerHTML = ‘<span style="font-size:12px;color:#333">아래 단어를 클릭하여 선택하세요.</span>’;
+return;
+}
+el.innerHTML = all.map(function(w) {
+return ‘<span class="sp-tag">’ + w + ‘</span>’;
+}).join(’’);
 }
 function toggleKw(wi) {
-  var idx = selIdx.indexOf(wi);
-  if (idx >= 0) {
-    selIdx.splice(idx, 1);
-    var el = document.getElementById('wt_' + wi);
-    if (el) el.className = 'wtoken';
-  } else {
-    if (totalSelected() >= 5) { flashMax(); return; }
-    selIdx.push(wi);
-    var el2 = document.getElementById('wt_' + wi);
-    if (el2) el2.className = 'wtoken sel';
-  }
-  updateKwCounter();
-  renderSelPreview();
+var idx = selIdx.indexOf(wi);
+if (idx >= 0) {
+selIdx.splice(idx, 1);
+var el = document.getElementById(‘wt_’ + wi);
+if (el) el.className = ‘wtoken’;
+} else {
+if (totalSelected() >= 5) { flashMax(); return; }
+selIdx.push(wi);
+var el2 = document.getElementById(‘wt_’ + wi);
+if (el2) el2.className = ‘wtoken sel’;
+}
+updateKwCounter();
+renderSelPreview();
 }
 function flashMax() {
-  var el = document.getElementById('kwcnt');
-  if (!el) return;
-  var prev = el.innerText;
-  el.innerText = '최대!'; el.style.color = '#ef4444';
-  setTimeout(function() { el.innerText = prev; el.style.color = '#ff4d57'; }, 1000);
+var el = document.getElementById(‘kwcnt’);
+if (!el) return;
+var prev = el.innerText;
+el.innerText = ‘최대!’; el.style.color = ‘#ef4444’;
+setTimeout(function() { el.innerText = prev; el.style.color = ‘#ff4d57’; }, 1000);
 }
 function countWordInEmails(word) {
-  var sc = 0, nc = 0;
-  EM.forEach(function(e) {
-    if ((e.subject + ' ' + e.body).indexOf(word) >= 0) {
-      if (e.official === '스팸') sc++; else nc++;
-    }
-  });
-  return { sc: sc, nc: nc };
+var sc = 0, nc = 0;
+EM.forEach(function(e) {
+if ((e.subject + ’ ’ + e.body).indexOf(word) >= 0) {
+if (e.official === ‘스팸’) sc++; else nc++;
+}
+});
+return { sc: sc, nc: nc };
 }
 function addCustomWord() {
-  var inp = document.getElementById('customKwInput');
-  if (!inp) return;
-  var word = inp.value.trim();
-  if (!word) return;
-  var existing = WDS.concat(custList.map(function(c) { return c.word; }));
-  if (existing.indexOf(word) >= 0) {
-    inp.style.borderColor = '#ef4444';
-    setTimeout(function() { inp.style.borderColor = '#3a3a55'; }, 1200);
-    inp.value = ''; return;
-  }
-  if (totalSelected() >= 5) { flashMax(); inp.value = ''; return; }
-  var cnt = countWordInEmails(word);
-  custList.push({ word: word, sc: cnt.sc, nc: cnt.nc });
-  inp.value = '';
-  renderCustomCloud();
-  updateKwCounter();
-  renderSelPreview();
+var inp = document.getElementById(‘customKwInput’);
+if (!inp) return;
+var word = inp.value.trim();
+if (!word) return;
+var existing = WDS.concat(custList.map(function(c) { return c.word; }));
+if (existing.indexOf(word) >= 0) {
+inp.style.borderColor = ‘#ef4444’;
+setTimeout(function() { inp.style.borderColor = ‘#3a3a55’; }, 1200);
+inp.value = ‘’; return;
+}
+if (totalSelected() >= 5) { flashMax(); inp.value = ‘’; return; }
+var cnt = countWordInEmails(word);
+custList.push({ word: word, sc: cnt.sc, nc: cnt.nc });
+inp.value = ‘’;
+renderCustomCloud();
+updateKwCounter();
+renderSelPreview();
 }
 function removeCustomWord(idx) {
-  custList.splice(idx, 1);
-  renderCustomCloud();
-  updateKwCounter();
-  renderSelPreview();
+custList.splice(idx, 1);
+renderCustomCloud();
+updateKwCounter();
+renderSelPreview();
 }
 function renderCustomCloud() {
-  var el = document.getElementById('custCloud');
-  if (!el) return;
-  var parts = [];
-  custList.forEach(function(c, idx) {
-    parts.push(
-      '<div style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;'
-      + 'border-radius:8px;border:1px solid #ff4d57;background:rgba(229,9,20,.12);margin:2px">'
-      + '<span style="font-size:13px;font-weight:700;color:#ff4d57">' + c.word + '</span>'
-      + '<button onclick="removeCustomWord(' + idx + ')"'
-      + ' style="background:none;border:none;color:#ff4d57;cursor:pointer;font-size:15px;line-height:1;padding:0">&times;</button>'
-      + '</div>'
-    );
-  });
-  el.innerHTML = parts.join('');
+var el = document.getElementById(‘custCloud’);
+if (!el) return;
+var parts = [];
+custList.forEach(function(c, idx) {
+parts.push(
+‘<div style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;'
++ 'border-radius:8px;border:1px solid #ff4d57;background:rgba(229,9,20,.12);margin:2px">’
++ ‘<span style="font-size:13px;font-weight:700;color:#ff4d57">’ + c.word + ‘</span>’
++ ‘<button onclick=“removeCustomWord(’ + idx + ‘)”’
++ ’ style=“background:none;border:none;color:#ff4d57;cursor:pointer;font-size:15px;line-height:1;padding:0”>×</button>’
++ ‘</div>’
+);
+});
+el.innerHTML = parts.join(’’);
 }
 function clearKeywords() {
-  selIdx = []; custList = [];
-  for (var wi = 0; wi < WDS.length; wi++) {
-    var el = document.getElementById('wt_' + wi);
-    if (el) el.className = 'wtoken';
-  }
-  var cc = document.getElementById('custCloud'); if (cc) cc.innerHTML = '';
-  var ci = document.getElementById('customKwInput'); if (ci) ci.value = '';
-  updateKwCounter();
-  renderSelPreview();
+selIdx = []; custList = [];
+for (var wi = 0; wi < WDS.length; wi++) {
+var el = document.getElementById(‘wt_’ + wi);
+if (el) el.className = ‘wtoken’;
+}
+var cc = document.getElementById(‘custCloud’); if (cc) cc.innerHTML = ‘’;
+var ci = document.getElementById(‘customKwInput’); if (ci) ci.value = ‘’;
+updateKwCounter();
+renderSelPreview();
 }
 function showPrevRound() {
-  var el = document.getElementById('prevRound');
-  if (!el) return;
-  if (!roundLog.length) { el.innerHTML = ''; return; }
-  var last = roundLog[roundLog.length - 1];
-  var h = '<div class="warn">'
-    + '<strong>' + last.num + '회차 결과:</strong> '
-    + '단일 <strong style="color:#f97316">' + last.acc1 + '/' + TS.length + '</strong>'
-    + ' &nbsp;|&nbsp; 나이브 베이즈 <strong style="color:#ff4d57">' + last.acc2 + '/' + TS.length + '</strong><br>'
-    + '<span style="font-size:12px">이전 키워드: '
-    + last.keywords.map(function(w) { return '<span class="wtag">' + w + '</span>'; }).join('')
-    + '</span></div>';
-  el.innerHTML = h;
+var el = document.getElementById(‘prevRound’);
+if (!el) return;
+if (!roundLog.length) { el.innerHTML = ‘’; return; }
+var last = roundLog[roundLog.length - 1];
+var h = ‘<div class="warn">’
++ ‘<strong>’ + last.num + ‘회차 결과:</strong> ’
++ ‘단일 <strong style="color:#f97316">’ + last.acc1 + ‘/’ + TS.length + ‘</strong>’
++ ’  |  나이브 베이즈 <strong style="color:#ff4d57">’ + last.acc2 + ‘/’ + TS.length + ‘</strong><br>’
++ ‘<span style="font-size:12px">이전 키워드: ’
++ last.keywords.map(function(w) { return ‘<span class="wtag">’ + w + ‘</span>’; }).join(’’)
++ ‘</span></div>’;
+el.innerHTML = h;
 }
 function goToCount() {
-  if (!totalSelected()) { alert('키워드를 선택해 주세요.'); return; }
-  cntScoreData = null;
-  probScoreData = null;
-  renderCountStep();
-  goStep(3);
+if (!totalSelected()) { alert(‘키워드를 선택해 주세요.’); return; }
+cntScoreData = null;
+probScoreData = null;
+renderCountStep();
+goStep(3);
 }
 function goBackToKw() {
-  clearKeywords();
-  roundNum++;
-  refreshAllBadges();
-  showPrevRound();
-  goStep(2);
+clearKeywords();
+roundNum++;
+refreshAllBadges();
+showPrevRound();
+goStep(2);
 }
 
 // === 등장횟수 세기 (Step 3) ===
-function getSpamEmails() { return EM.filter(function(e) { return lblMap[e.id] === 'spam'; }); }
-function getHamEmails()  { return EM.filter(function(e) { return lblMap[e.id] === 'ham';  }); }
+function getSpamEmails() { return EM.filter(function(e) { return lblMap[e.id] === ‘spam’; }); }
+function getHamEmails()  { return EM.filter(function(e) { return lblMap[e.id] === ‘ham’;  }); }
 
 function getRealCounts(word) {
-  var spamE = getSpamEmails(), hamE = getHamEmails();
-  var sc = spamE.filter(function(e) { return (e.subject+' '+e.body).indexOf(word) >= 0; }).length;
-  var nc = hamE.filter(function(e)  { return (e.subject+' '+e.body).indexOf(word) >= 0; }).length;
-  return { sc: sc, nc: nc };
+var spamE = getSpamEmails(), hamE = getHamEmails();
+var sc = spamE.filter(function(e) { return (e.subject+’ ‘+e.body).indexOf(word) >= 0; }).length;
+var nc = hamE.filter(function(e)  { return (e.subject+’ ’+e.body).indexOf(word) >= 0; }).length;
+return { sc: sc, nc: nc };
 }
 
 function renderCountStep() {
-  var allW  = getAllWords();
-  var nS    = getSpamEmails().length;
-  var nH    = getHamEmails().length;
+var allW  = getAllWords();
+var nS    = getSpamEmails().length;
+var nH    = getHamEmails().length;
 
-  var h = '<div class="info">';
-  h += '내 레이블: 스팸 <strong style="color:#ef4444">' + nS + '개</strong>';
-  h += ' / 정상 <strong style="color:#22c55e">' + nH + '개</strong><br>';
-  h += '<span style="font-size:12px">아래 각 단어가 스팸/정상 이메일에 몇 번 등장하는지 직접 세어보세요.</span>';
-  h += '</div>';
+var h = ‘<div class="info">’;
+h += ‘내 레이블: 스팸 <strong style="color:#ef4444">’ + nS + ‘개</strong>’;
+h += ’ / 정상 <strong style="color:#22c55e">’ + nH + ‘개</strong><br>’;
+h += ‘<span style="font-size:12px">아래 각 단어가 스팸/정상 이메일에 몇 번 등장하는지 직접 세어보세요.</span>’;
+h += ‘</div>’;
 
-  // 이메일 목록 (참고용 — 접기/펼치기)
-  h += '<div class="card">';
-  h += '<button onclick="toggleEmailRef()" class="btn gray" style="margin-bottom:10px;font-size:12px">📧 이메일 목록 보기/숨기기</button>';
-  h += '<div id="emailRef" style="display:none">';
-  var spamE2 = getSpamEmails(), hamE2 = getHamEmails();
-  h += '<div style="margin-bottom:8px"><strong style="color:#ef4444">스팸 이메일 (' + spamE2.length + '개)</strong></div>';
-  spamE2.forEach(function(e) {
-    h += '<div style="padding:7px 10px;background:#1e1e2e;border-radius:7px;margin-bottom:4px;border-left:2px solid #ef4444;font-size:12px">';
-    h += '<strong style="color:#ef4444">' + e.id + '</strong> ' + e.subject + '<br>';
-    h += '<span style="color:#555">' + e.body + '</span></div>';
-  });
-  h += '<div style="margin:10px 0 8px"><strong style="color:#22c55e">정상 이메일 (' + hamE2.length + '개)</strong></div>';
-  hamE2.forEach(function(e) {
-    h += '<div style="padding:7px 10px;background:#1e1e2e;border-radius:7px;margin-bottom:4px;border-left:2px solid #22c55e;font-size:12px">';
-    h += '<strong style="color:#22c55e">' + e.id + '</strong> ' + e.subject + '<br>';
-    h += '<span style="color:#555">' + e.body + '</span></div>';
-  });
-  h += '</div></div>';
+// 이메일 목록 (참고용 — 접기/펼치기)
+h += ‘<div class="card">’;
+h += ‘<button onclick="toggleEmailRef()" class="btn gray" style="margin-bottom:10px;font-size:12px">📧 이메일 목록 보기/숨기기</button>’;
+h += ‘<div id="emailRef" style="display:none">’;
+var spamE2 = getSpamEmails(), hamE2 = getHamEmails();
+h += ‘<div style="margin-bottom:8px"><strong style="color:#ef4444">스팸 이메일 (’ + spamE2.length + ‘개)</strong></div>’;
+spamE2.forEach(function(e) {
+h += ‘<div style="padding:7px 10px;background:#1e1e2e;border-radius:7px;margin-bottom:4px;border-left:2px solid #ef4444;font-size:12px">’;
+h += ‘<strong style="color:#ef4444">’ + e.id + ’</strong> ’ + e.subject + ‘<br>’;
+h += ‘<span style="color:#555">’ + e.body + ‘</span></div>’;
+});
+h += ‘<div style="margin:10px 0 8px"><strong style="color:#22c55e">정상 이메일 (’ + hamE2.length + ‘개)</strong></div>’;
+hamE2.forEach(function(e) {
+h += ‘<div style="padding:7px 10px;background:#1e1e2e;border-radius:7px;margin-bottom:4px;border-left:2px solid #22c55e;font-size:12px">’;
+h += ‘<strong style="color:#22c55e">’ + e.id + ’</strong> ’ + e.subject + ‘<br>’;
+h += ‘<span style="color:#555">’ + e.body + ‘</span></div>’;
+});
+h += ‘</div></div>’;
 
-  // 등장횟수 입력 테이블
-  h += '<div class="card">';
-  h += '<div style="display:grid;grid-template-columns:140px 1fr 1fr 80px;gap:8px;align-items:center;padding:6px 12px;margin-bottom:8px">';
-  h += '<span style="font-size:10px;color:#475569;letter-spacing:1px;text-transform:uppercase">키워드</span>';
-  h += '<span style="font-size:10px;color:#ef4444;letter-spacing:1px;text-transform:uppercase;text-align:center">스팸 등장 횟수</span>';
-  h += '<span style="font-size:10px;color:#22c55e;letter-spacing:1px;text-transform:uppercase;text-align:center">정상 등장 횟수</span>';
-  h += '<span></span></div>';
+// 등장횟수 입력 테이블
+h += ‘<div class="card">’;
+h += ‘<div style="display:grid;grid-template-columns:140px 1fr 1fr 80px;gap:8px;align-items:center;padding:6px 12px;margin-bottom:8px">’;
+h += ‘<span style="font-size:10px;color:#475569;letter-spacing:1px;text-transform:uppercase">키워드</span>’;
+h += ‘<span style="font-size:10px;color:#ef4444;letter-spacing:1px;text-transform:uppercase;text-align:center">스팸 등장 횟수</span>’;
+h += ‘<span style="font-size:10px;color:#22c55e;letter-spacing:1px;text-transform:uppercase;text-align:center">정상 등장 횟수</span>’;
+h += ‘<span></span></div>’;
 
-  allW.forEach(function(w, i) {
-    h += '<div class="cnt-row">';
-    h += '<span class="cnt-label">' + w + '</span>';
-    h += '<input type="number" min="0" max="10" class="cnt-inp" id="csc_' + i + '" placeholder="?" style="border-color:#ef4444">';
-    h += '<input type="number" min="0" max="10" class="cnt-inp" id="cnc_' + i + '" placeholder="?" style="border-color:#22c55e">';
-    h += '<span id="cres_' + i + '"></span>';
-    h += '</div>';
-  });
-  h += '</div>';
+allW.forEach(function(w, i) {
+h += ‘<div class="cnt-row">’;
+h += ‘<span class="cnt-label">’ + w + ‘</span>’;
+h += ‘<input type="number" min="0" max="10" class="cnt-inp" id="csc_' + i + '" placeholder="?" style="border-color:#ef4444">’;
+h += ‘<input type="number" min="0" max="10" class="cnt-inp" id="cnc_' + i + '" placeholder="?" style="border-color:#22c55e">’;
+h += ‘<span id="cres_' + i + '"></span>’;
+h += ‘</div>’;
+});
+h += ‘</div>’;
 
-  h += '<div id="cntFeedback"></div>';
+h += ‘<div id="cntFeedback"></div>’;
 
-  document.getElementById('countContent').innerHTML = h;
+document.getElementById(‘countContent’).innerHTML = h;
 }
 
 function toggleEmailRef() {
-  var el = document.getElementById('emailRef');
-  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+var el = document.getElementById(‘emailRef’);
+if (el) el.style.display = el.style.display === ‘none’ ? ‘block’ : ‘none’;
+}
+
+function allCountsFilled() {
+var allW = getAllWords();
+for (var i = 0; i < allW.length; i++) {
+var sc = document.getElementById(‘csc_’ + i);
+var nc = document.getElementById(‘cnc_’ + i);
+if (!sc || sc.value === ‘’ || !nc || nc.value === ‘’) return false;
+}
+return true;
 }
 
 function checkCounts() {
-  var allW = getAllWords();
-  var correct = 0, total = allW.length;
-  var details = [];
+// 모든 값이 입력됐는지 먼저 확인
+if (!allCountsFilled()) {
+alert(‘모든 키워드의 스팸·정상 등장 횟수를 빠짐없이 입력해 주세요.’);
+return;
+}
 
-  allW.forEach(function(w, i) {
-    var real = getRealCounts(w);
-    var inpSc = parseInt(document.getElementById('csc_' + i).value);
-    var inpNc = parseInt(document.getElementById('cnc_' + i).value);
-    var scOk = (inpSc === real.sc);
-    var ncOk = (inpNc === real.nc);
-    var ok = scOk && ncOk;
-    if (ok) correct++;
+var allW = getAllWords();
+var correct = 0, total = allW.length;
+var details = [];
 
-    var scEl = document.getElementById('csc_' + i);
-    var ncEl = document.getElementById('cnc_' + i);
-    if (scEl) scEl.className = 'cnt-inp ' + (scOk ? 'correct' : 'wrong');
-    if (ncEl) ncEl.className = 'cnt-inp ' + (ncOk ? 'correct' : 'wrong');
+allW.forEach(function(w, i) {
+var real = getRealCounts(w);
+var inpSc = parseInt(document.getElementById(‘csc_’ + i).value);
+var inpNc = parseInt(document.getElementById(‘cnc_’ + i).value);
+var scOk = (inpSc === real.sc);
+var ncOk = (inpNc === real.nc);
+var ok = scOk && ncOk;
+if (ok) correct++;
 
-    var resEl = document.getElementById('cres_' + i);
-    if (resEl) resEl.innerHTML = ok
-      ? '<span style="color:#22c55e;font-size:16px">✓</span>'
-      : '<span style="color:#ef4444;font-size:16px">✗</span>';
+```
+var scEl = document.getElementById('csc_' + i);
+var ncEl = document.getElementById('cnc_' + i);
+if (scEl) scEl.className = 'cnt-inp ' + (scOk ? 'correct' : 'wrong');
+if (ncEl) ncEl.className = 'cnt-inp ' + (ncOk ? 'correct' : 'wrong');
 
-    details.push({ word: w, realSc: real.sc, realNc: real.nc, inpSc: inpSc, inpNc: inpNc, ok: ok });
-  });
+var resEl = document.getElementById('cres_' + i);
+if (resEl) resEl.innerHTML = ok
+  ? '<span style="color:#22c55e;font-size:16px">✓</span>'
+  : '<span style="color:#ef4444;font-size:16px">✗</span>';
 
-  cntScoreData = { correct: correct, total: total, details: details };
+details.push({ word: w, realSc: real.sc, realNc: real.nc, inpSc: inpSc, inpNc: inpNc, ok: ok });
+```
 
-  var h = '';
-  if (correct === total) {
-    h = '<div class="ok-box"><strong>🎉 완벽합니다! 모든 등장 횟수가 맞았습니다.</strong><br>다음 단계에서 이 숫자로 확률을 직접 계산합니다.</div>';
-  } else {
-    h = '<div class="warn"><strong>' + correct + '/' + total + '개 정답</strong><br>';
-    details.filter(function(d) { return !d.ok; }).forEach(function(d) {
-      h += '&bull; <strong>' + d.word + '</strong>: ';
-      h += '스팸 ' + (isNaN(d.inpSc)?'?':d.inpSc) + '회 → 정답 <strong style="color:#ef4444">' + d.realSc + '회</strong> / ';
-      h += '정상 ' + (isNaN(d.inpNc)?'?':d.inpNc) + '회 → 정답 <strong style="color:#22c55e">' + d.realNc + '회</strong><br>';
-    });
-    h += '틀린 항목을 수정하고 다시 확인할 수 있습니다.</div>';
-  }
-  document.getElementById('cntFeedback').innerHTML = h;
+});
+
+cntScoreData = { correct: correct, total: total, details: details };
+
+var h = ‘’;
+if (correct === total) {
+h = ‘<div class="ok-box"><strong>🎉 완벽합니다! 모든 등장 횟수가 맞았습니다.</strong><br>다음 단계에서 이 숫자로 확률을 직접 계산합니다.</div>’;
+} else {
+h = ‘<div class="warn"><strong>’ + correct + ‘/’ + total + ‘개 정답</strong><br>’;
+details.filter(function(d) { return !d.ok; }).forEach(function(d) {
+h += ‘• <strong>’ + d.word + ’</strong>: ‘;
+h += ‘스팸 ’ + (isNaN(d.inpSc)?’?’:d.inpSc) + ‘회 → 정답 <strong style="color:#ef4444">’ + d.realSc + ’회</strong> / ‘;
+h += ‘정상 ’ + (isNaN(d.inpNc)?’?’:d.inpNc) + ‘회 → 정답 <strong style="color:#22c55e">’ + d.realNc + ‘회</strong><br>’;
+});
+h += ‘틀린 항목을 수정하고 다시 채점할 수 있습니다.</div>’;
+}
+document.getElementById(‘cntFeedback’).innerHTML = h;
+
+// 채점 완료 후 다음 단계 버튼 활성화
+var nextBtn = document.getElementById(‘toProb’);
+if (nextBtn) { nextBtn.disabled = false; nextBtn.style.opacity = ‘1’; }
 }
 
 function goToProbCalc() {
-  if (!cntScoreData) { alert('먼저 등장 횟수를 입력하고 채점해 주세요.'); return; }
-  renderProbCalcStep();
-  goStep(4);
+if (!cntScoreData) { alert(‘먼저 등장 횟수를 입력하고 채점해 주세요.’); return; }
+if (!allCountsFilled()) { alert(‘모든 값을 입력하고 채점해 주세요.’); return; }
+renderProbCalcStep();
+goStep(4);
 }
 
 // === 확률 계산 빈칸 채우기 (Step 4) ===
 function calcProbs() {
-  var spamE = getSpamEmails(), hamE = getHamEmails();
-  var nS = spamE.length || 1, nH = hamE.length || 1;
-  var allW = getAllWords(), V = allW.length || 1;
-  // 슬라이더 값 우선, 없으면 레이블 비율
-  var priorH = 1 - priorS;
-  var probs = {};
-  allW.forEach(function(w) {
-    var sc = spamE.filter(function(e) { return (e.subject+' '+e.body).indexOf(w) >= 0; }).length;
-    var nc = hamE.filter(function(e)  { return (e.subject+' '+e.body).indexOf(w) >= 0; }).length;
-    probs[w] = { sc:sc, nc:nc, ps:(sc+1)/(nS+V), pn:(nc+1)/(nH+V) };
-  });
-  return { probs:probs, nS:nS, nH:nH, V:V, priorS:priorS, priorH:priorH };
+var spamE = getSpamEmails(), hamE = getHamEmails();
+var nS = spamE.length || 1, nH = hamE.length || 1;
+var allW = getAllWords(), V = allW.length || 1;
+var priorS = nS / (nS + nH), priorH = nH / (nS + nH);
+var probs = {};
+allW.forEach(function(w) {
+var sc = spamE.filter(function(e) { return (e.subject+’ ‘+e.body).indexOf(w) >= 0; }).length;
+var nc = hamE.filter(function(e)  { return (e.subject+’ ’+e.body).indexOf(w) >= 0; }).length;
+probs[w] = { sc:sc, nc:nc, ps:(sc+1)/(nS+V), pn:(nc+1)/(nH+V) };
+});
+return { probs:probs, nS:nS, nH:nH, V:V, priorS:priorS, priorH:priorH };
 }
 
 function renderProbCalcStep() {
-  var info = calcProbs();
-  var allW = getAllWords();
-  var nS   = info.nS, nH = info.nH, V = info.V;
+var info = calcProbs();
+var allW = getAllWords();
+var nS   = info.nS, nH = info.nH, V = info.V;
 
-  var h = '<div class="info">'
-    + '<strong style="color:#60a5fa">라플라스 스무딩 공식</strong><br>'
-    + 'P(단어 | 스팸) = (스팸 등장 횟수 + 1) ÷ (스팸 이메일 수 + V)<br>'
-    + 'P(단어 | 정상) = (정상 등장 횟수 + 1) ÷ (정상 이메일 수 + V)<br>'
-    + '<span style="color:#fff">스팸 이메일 수 = ' + nS + ', 정상 이메일 수 = ' + nH + ', V = ' + V + '</span>'
-    + '</div>';
+var h = ‘<div class="info">’
++ ‘<strong style="color:#60a5fa">라플라스 스무딩 공식</strong><br>’
++ ‘P(단어 | 스팸) = (스팸 등장 횟수 + 1) ÷ (스팸 이메일 수 + V)<br>’
++ ‘P(단어 | 정상) = (정상 등장 횟수 + 1) ÷ (정상 이메일 수 + V)<br>’
++ ’<span style="color:#fff">스팸 이메일 수 = ’ + nS + ’, 정상 이메일 수 = ’ + nH + ’, V = ’ + V + ‘</span>’
++ ‘</div>’;
 
-  h += '<div id="probBlocks">';
-  allW.forEach(function(w, i) {
-    var p = info.probs[w];
-    h += '<div class="prob-block">';
-    h += '<div class="prob-word">' + w + '</div>';
-    h += '<div class="prob-counts">'
-      + '스팸 등장: <strong style="color:#ef4444">' + p.sc + '회</strong>'
-      + '&nbsp;&nbsp;정상 등장: <strong style="color:#22c55e">' + p.nc + '회</strong>'
-      + '</div>';
+h += ‘<div id="probBlocks">’;
+allW.forEach(function(w, i) {
+var p = info.probs[w];
+h += ‘<div class="prob-block">’;
+h += ‘<div class="prob-word">’ + w + ‘</div>’;
+h += ‘<div class="prob-counts">’
++ ‘스팸 등장: <strong style="color:#ef4444">’ + p.sc + ‘회</strong>’
++ ‘  정상 등장: <strong style="color:#22c55e">’ + p.nc + ‘회</strong>’
++ ‘</div>’;
 
-    // P(단어|스팸) 입력
-    h += '<div class="prob-row">';
-    h += '<span class="prob-formula" style="color:#ef4444">'
-      + 'P(' + w + ' | 스팸) = (' + p.sc + '+1) ÷ (' + nS + '+' + V + ') =</span>';
-    h += '<input type="number" step="0.001" min="0" max="1" class="prob-inp" id="pis_' + i
-      + '" placeholder="0.___">';
-    h += '<span class="prob-answer" id="pans_' + i + '" style="color:#555">→ ?</span>';
-    h += '</div>';
+```
+// P(단어|스팸) 입력
+h += '<div class="prob-row">';
+h += '<span style="font-size:13px;color:#ef4444;font-weight:600;min-width:160px">P(' + w + ' | 스팸) =</span>';
+h += '<input type="number" step="0.001" min="0" max="1" class="prob-inp" id="pis_' + i
+  + '" placeholder="0.___">';
+h += '<span class="prob-answer" id="pans_' + i + '" style="color:#555">→ ?</span>';
+h += '</div>';
 
-    // P(단어|정상) 입력
-    h += '<div class="prob-row">';
-    h += '<span class="prob-formula" style="color:#22c55e">'
-      + 'P(' + w + ' | 정상) = (' + p.nc + '+1) ÷ (' + nH + '+' + V + ') =</span>';
-    h += '<input type="number" step="0.001" min="0" max="1" class="prob-inp" id="pin_' + i
-      + '" placeholder="0.___">';
-    h += '<span class="prob-answer" id="pann_' + i + '" style="color:#555">→ ?</span>';
-    h += '</div>';
+// P(단어|정상) 입력
+h += '<div class="prob-row">';
+h += '<span style="font-size:13px;color:#22c55e;font-weight:600;min-width:160px">P(' + w + ' | 정상) =</span>';
+h += '<input type="number" step="0.001" min="0" max="1" class="prob-inp" id="pin_' + i
+  + '" placeholder="0.___">';
+h += '<span class="prob-answer" id="pann_' + i + '" style="color:#555">→ ?</span>';
+h += '</div>';
 
-    h += '<span id="pres_' + i + '"></span>';
-    h += '</div>';
-  });
-  h += '</div>';
-  h += '<div id="probFeedback"></div>';
+h += '<span id="pres_' + i + '"></span>';
+h += '</div>';
+```
 
-  document.getElementById('probContent').innerHTML = h;
+});
+h += ‘</div>’;
+h += ‘<div id="probFeedback"></div>’;
+
+document.getElementById(‘probContent’).innerHTML = h;
+}
+
+function allProbsFilled() {
+var allW = getAllWords();
+for (var i = 0; i < allW.length; i++) {
+var s = document.getElementById(‘pis_’ + i);
+var n = document.getElementById(‘pin_’ + i);
+if (!s || s.value === ‘’ || !n || n.value === ‘’) return false;
+}
+return true;
 }
 
 function checkProbs() {
-  var info = calcProbs();
-  var allW = getAllWords();
-  var correct = 0, total = allW.length * 2;
-  var details = [];
-  var TOL = 0.01; // 허용 오차 ±0.01
+// 모든 값이 입력됐는지 먼저 확인
+if (!allProbsFilled()) {
+alert(‘모든 키워드의 P(단어|스팸)과 P(단어|정상)을 빠짐없이 입력해 주세요.’);
+return;
+}
 
-  allW.forEach(function(w, i) {
-    var p     = info.probs[w];
-    var inpS  = parseFloat(document.getElementById('pis_' + i).value);
-    var inpN  = parseFloat(document.getElementById('pin_' + i).value);
-    var sOk   = !isNaN(inpS) && Math.abs(inpS - p.ps) <= TOL;
-    var nOk   = !isNaN(inpN) && Math.abs(inpN - p.pn) <= TOL;
-    if (sOk) correct++;
-    if (nOk) correct++;
+var info = calcProbs();
+var allW = getAllWords();
+var correct = 0, total = allW.length * 2;
+var details = [];
+var TOL = 0.01; // 허용 오차 ±0.01
 
-    // 입력창 색상
-    var sEl = document.getElementById('pis_' + i);
-    var nEl = document.getElementById('pin_' + i);
-    if (sEl) sEl.className = 'prob-inp ' + (sOk ? 'correct' : 'wrong');
-    if (nEl) nEl.className = 'prob-inp ' + (nOk ? 'correct' : 'wrong');
+allW.forEach(function(w, i) {
+var p     = info.probs[w];
+var inpS  = parseFloat(document.getElementById(‘pis_’ + i).value);
+var inpN  = parseFloat(document.getElementById(‘pin_’ + i).value);
+var sOk   = !isNaN(inpS) && Math.abs(inpS - p.ps) <= TOL;
+var nOk   = !isNaN(inpN) && Math.abs(inpN - p.pn) <= TOL;
+if (sOk) correct++;
+if (nOk) correct++;
 
-    // 정답 표시
-    var sAns = document.getElementById('pans_' + i);
-    var nAns = document.getElementById('pann_' + i);
-    if (sAns) sAns.innerHTML = '&rarr; <span style="color:' + (sOk?'#22c55e':'#ef4444') + ';font-weight:700">' + p.ps.toFixed(3) + '</span>';
-    if (nAns) nAns.innerHTML = '&rarr; <span style="color:' + (nOk?'#22c55e':'#ef4444') + ';font-weight:700">' + p.pn.toFixed(3) + '</span>';
+```
+// 입력창 색상
+var sEl = document.getElementById('pis_' + i);
+var nEl = document.getElementById('pin_' + i);
+if (sEl) sEl.className = 'prob-inp ' + (sOk ? 'correct' : 'wrong');
+if (nEl) nEl.className = 'prob-inp ' + (nOk ? 'correct' : 'wrong');
 
-    // 행 결과
-    var resEl = document.getElementById('pres_' + i);
-    var bothOk = sOk && nOk;
-    if (resEl) resEl.innerHTML = '<span style="font-size:12px;color:' + (bothOk?'#22c55e':'#eab308') + ';margin-top:4px;display:block">'
-      + (bothOk ? '✓ 완벽!' : (sOk||nOk) ? '△ 부분 정답' : '✗ 다시 계산해보세요') + '</span>';
+// 정답 표시
+var sAns = document.getElementById('pans_' + i);
+var nAns = document.getElementById('pann_' + i);
+if (sAns) sAns.innerHTML = '&rarr; <span style="color:' + (sOk?'#22c55e':'#ef4444') + ';font-weight:700">' + p.ps.toFixed(3) + '</span>';
+if (nAns) nAns.innerHTML = '&rarr; <span style="color:' + (nOk?'#22c55e':'#ef4444') + ';font-weight:700">' + p.pn.toFixed(3) + '</span>';
 
-    details.push({ word: w, ps: p.ps, pn: p.pn, inpS: inpS, inpN: inpN, sOk: sOk, nOk: nOk });
-  });
+// 행 결과
+var resEl = document.getElementById('pres_' + i);
+var bothOk = sOk && nOk;
+if (resEl) resEl.innerHTML = '<span style="font-size:12px;color:' + (bothOk?'#22c55e':'#eab308') + ';margin-top:4px;display:block">'
+  + (bothOk ? '✓ 완벽!' : (sOk||nOk) ? '△ 부분 정답' : '✗ 다시 계산해보세요') + '</span>';
 
-  probScoreData = { correct: correct, total: total, details: details };
+details.push({ word: w, ps: p.ps, pn: p.pn, inpS: inpS, inpN: inpN, sOk: sOk, nOk: nOk });
+```
 
-  var pct = Math.round(correct / total * 100);
-  var h = '';
-  if (correct === total) {
-    h = '<div class="ok-box"><strong>🎉 모든 확률 계산이 정확합니다!</strong><br>이제 이 확률로 테스트 이메일을 분류합니다.</div>';
-  } else {
-    var badgeClass = pct >= 70 ? 'score-partial' : 'score-miss';
-    h = '<div class="warn"><strong>' + correct + '/' + total + '개 정답 (' + pct + '%)</strong><br>';
-    h += '정답이 표시되었습니다. 허용 오차: ±0.01<br>';
-    h += '수정 후 다시 채점할 수 있습니다.</div>';
-  }
-  document.getElementById('probFeedback').innerHTML = h;
+});
+
+probScoreData = { correct: correct, total: total, details: details };
+
+var pct = Math.round(correct / total * 100);
+var h = ‘’;
+if (correct === total) {
+h = ‘<div class="ok-box"><strong>🎉 모든 확률 계산이 정확합니다!</strong><br>이제 이 확률로 테스트 이메일을 분류합니다.</div>’;
+} else {
+h = ‘<div class="warn"><strong>’ + correct + ‘/’ + total + ‘개 정답 (’ + pct + ‘%)</strong><br>’;
+h += ‘정답이 표시되었습니다. 허용 오차: ±0.01<br>’;
+h += ‘수정 후 다시 채점할 수 있습니다.</div>’;
+}
+document.getElementById(‘probFeedback’).innerHTML = h;
+
+// 채점 완료 후 다음 단계 버튼 활성화
+var nextBtn = document.getElementById(‘toTest’);
+if (nextBtn) { nextBtn.disabled = false; nextBtn.style.opacity = ‘1’; }
 }
 
 function goToTest() {
-  if (!probScoreData) { alert('먼저 확률을 입력하고 채점해 주세요.'); return; }
-  // 슬라이더 초기화
-  priorS = 0.5;
-  var sl = document.getElementById('priorSlider');
-  if (sl) sl.value = 5;
-  var dS = document.getElementById('priorDisplay');
-  var dH = document.getElementById('priorHDisplay');
-  if (dS) dS.innerText = '0.5';
-  if (dH) dH.innerText = '0.5';
-  var cc = document.getElementById('changedCount');
-  if (cc) cc.innerText = '—';
-  var pb = document.getElementById('priorChangedBox');
-  if (pb) pb.innerHTML = '';
-  runTest();
-  goStep(5);
+if (!probScoreData) { alert(‘먼저 확률을 입력하고 채점해 주세요.’); return; }
+if (!allProbsFilled()) { alert(‘모든 확률 값을 입력하고 채점해 주세요.’); return; }
+runTest();
+goStep(5);
 }
 
 // === 테스트 ===
 function classifyNB(emailWords) {
-  var info = calcProbs(), allW = getAllWords();
-  var hit  = emailWords.filter(function(w) { return allW.indexOf(w) >= 0; });
-  if (!hit.length) return 50;
-  var s = info.priorS, n = info.priorH;
-  hit.forEach(function(w) { var p = info.probs[w]; if (p) { s *= p.ps; n *= p.pn; } });
-  var tot = s + n;
-  return tot > 0 ? Math.round(s / tot * 1000) / 10 : 50;
+var info = calcProbs(), allW = getAllWords();
+var hit  = emailWords.filter(function(w) { return allW.indexOf(w) >= 0; });
+if (!hit.length) return 50;
+var s = info.priorS, n = info.priorH;
+hit.forEach(function(w) { var p = info.probs[w]; if (p) { s *= p.ps; n *= p.pn; } });
+var tot = s + n;
+return tot > 0 ? Math.round(s / tot * 1000) / 10 : 50;
 }
 function getBestWord() {
-  var info = calcProbs(), allW = getAllWords(), best = null, maxD = -1;
-  allW.forEach(function(w) {
-    var p = info.probs[w]; if (!p) return;
-    var d = Math.abs(p.ps - p.pn); if (d > maxD) { maxD = d; best = w; }
-  });
-  return best;
+var info = calcProbs(), allW = getAllWords(), best = null, maxD = -1;
+allW.forEach(function(w) {
+var p = info.probs[w]; if (!p) return;
+var d = Math.abs(p.ps - p.pn); if (d > maxD) { maxD = d; best = w; }
+});
+return best;
 }
 function classifySingle(emailWords) {
-  var best = getBestWord();
-  if (!best) return { pct:50, label:'판단불가', best:'-', hit:false };
-  var info = calcProbs(), p = info.probs[best];
-  if (!p) return { pct:50, label:'판단불가', best:best, hit:false };
-  var hit = (emailWords.indexOf(best) >= 0);
-  var s, n;
-  if (hit) { s = info.priorS*p.ps;       n = info.priorH*p.pn; }
-  else     { s = info.priorS*(1-p.ps);   n = info.priorH*(1-p.pn); }
-  var tot = s+n, pct = tot>0 ? Math.round(s/tot*1000)/10 : 50;
-  return { pct:pct, label:pct>=50?'스팸':'정상', best:best, hit:hit };
+var best = getBestWord();
+if (!best) return { pct:50, label:‘판단불가’, best:’-’, hit:false };
+var info = calcProbs(), p = info.probs[best];
+if (!p) return { pct:50, label:‘판단불가’, best:best, hit:false };
+var hit = (emailWords.indexOf(best) >= 0);
+var s, n;
+if (hit) { s = info.priorS*p.ps;       n = info.priorH*p.pn; }
+else     { s = info.priorS*(1-p.ps);   n = info.priorH*(1-p.pn); }
+var tot = s+n, pct = tot>0 ? Math.round(s/tot*1000)/10 : 50;
+return { pct:pct, label:pct>=50?‘스팸’:‘정상’, best:best, hit:hit };
 }
 
 function runTest() {
-  var allW = getAllWords();
-  var ok1 = 0, ok2 = 0, rows = '';
+var allW = getAllWords();
+var ok1 = 0, ok2 = 0, rows = ‘’;
 
-  TS.forEach(function(e) {
-    var isSpam = (e.label === '스팸');
-    var badge  = isSpam ? '<span class="bs">스팸</span>' : '<span class="bh">정상</span>';
-    var sr     = classifySingle(e.words);
-    var sc     = (sr.label === e.label); if (sc) ok1++;
-    var pct    = classifyNB(e.words), nbL = pct >= 50 ? '스팸' : '정상';
-    var nc     = (nbL === e.label); if (nc) ok2++;
-    var changed = (sr.label !== nbL);
-    var hit = e.words.filter(function(w) { return allW.indexOf(w) >= 0; });
+TS.forEach(function(e) {
+var isSpam = (e.label === ‘스팸’);
+var badge  = isSpam ? ‘<span class="bs">스팸</span>’ : ‘<span class="bh">정상</span>’;
+var sr     = classifySingle(e.words);
+var sc     = (sr.label === e.label); if (sc) ok1++;
+var pct    = classifyNB(e.words), nbL = pct >= 50 ? ‘스팸’ : ‘정상’;
+var nc     = (nbL === e.label); if (nc) ok2++;
+var changed = (sr.label !== nbL);
+var hit = e.words.filter(function(w) { return allW.indexOf(w) >= 0; });
 
-    rows += '<tr style="' + (changed?'background:rgba(234,179,8,.04)':'') + '">';
-    rows += '<td style="font-size:11px;color:#555">' + e.id + '</td>';
-    rows += '<td>' + e.text + (changed?' <span style="color:#eab308">&#9650;</span>':'') + '</td>';
-    rows += '<td>' + badge + '</td>';
-    rows += '<td>' + e.words.map(function(w){return '<span class="wtag">'+w+'</span>';}).join('') + '</td>';
+```
+rows += '<tr style="' + (changed?'background:rgba(234,179,8,.04)':'') + '">';
+rows += '<td style="font-size:11px;color:#555">' + e.id + '</td>';
+rows += '<td>' + e.text + (changed?' <span style="color:#eab308">&#9650;</span>':'') + '</td>';
+rows += '<td>' + badge + '</td>';
+rows += '<td>' + e.words.map(function(w){return '<span class="wtag">'+w+'</span>';}).join('') + '</td>';
 
-    var sjc = sr.label==='스팸'?'#ef4444':'#22c55e', stc = sc?'#22c55e':'#ef4444';
-    rows += '<td style="text-align:center">'
-      + '<div style="font-size:10px;color:#f97316;margin-bottom:2px">' + sr.best + (sr.hit?' ✓':' ✗') + '</div>'
-      + '<span style="font-weight:700;color:' + sjc + '">' + sr.label + '</span> '
-      + '<span style="color:' + stc + '">' + (sc?'✓':'✗') + '</span></td>';
-    rows += '<td style="text-align:center;font-family:monospace;font-size:12px">' + sr.pct.toFixed(1) + '%</td>';
+var sjc = sr.label==='스팸'?'#ef4444':'#22c55e', stc = sc?'#22c55e':'#ef4444';
+rows += '<td style="text-align:center">'
+  + '<div style="font-size:10px;color:#f97316;margin-bottom:2px">' + sr.best + (sr.hit?' ✓':' ✗') + '</div>'
+  + '<span style="font-weight:700;color:' + sjc + '">' + sr.label + '</span> '
+  + '<span style="color:' + stc + '">' + (sc?'✓':'✗') + '</span></td>';
+rows += '<td style="text-align:center;font-family:monospace;font-size:12px">' + sr.pct.toFixed(1) + '%</td>';
 
-    var njc = nbL==='스팸'?'#ef4444':'#22c55e', ntc = nc?'#22c55e':'#ef4444';
-    rows += '<td style="text-align:center;' + (changed?'background:rgba(234,179,8,.08)':'') + '">'
-      + (changed ? '<div style="font-size:9px;color:#eab308">&#9650;바뀜</div>' : '')
-      + '<span style="font-weight:700;color:' + njc + '">' + nbL + '</span> '
-      + '<span style="color:' + ntc + '">' + (nc?'✓':'✗') + '</span>'
-      + (hit.length ? '<div style="font-size:10px;color:#ff4d57">'+hit.join(',')+'</div>' : '')
-      + '</td>';
-    rows += '<td style="text-align:center;font-family:monospace;font-size:12px;' + (changed?'background:rgba(234,179,8,.08)':'') + '">' + pct.toFixed(1) + '%</td>';
-    rows += '</tr>';
-  });
+var njc = nbL==='스팸'?'#ef4444':'#22c55e', ntc = nc?'#22c55e':'#ef4444';
+rows += '<td style="text-align:center;' + (changed?'background:rgba(234,179,8,.08)':'') + '">'
+  + (changed ? '<div style="font-size:9px;color:#eab308">&#9650;바뀜</div>' : '')
+  + '<span style="font-weight:700;color:' + njc + '">' + nbL + '</span> '
+  + '<span style="color:' + ntc + '">' + (nc?'✓':'✗') + '</span>'
+  + (hit.length ? '<div style="font-size:10px;color:#ff4d57">'+hit.join(',')+'</div>' : '')
+  + '</td>';
+rows += '<td style="text-align:center;font-family:monospace;font-size:12px;' + (changed?'background:rgba(234,179,8,.08)':'') + '">' + pct.toFixed(1) + '%</td>';
+rows += '</tr>';
+```
 
-  document.getElementById('testBody').innerHTML = rows;
-  document.getElementById('acc1').innerText = ok1 + '/' + TS.length;
-  document.getElementById('acc2').innerText = ok2 + '/' + TS.length;
-  var best = getBestWord();
-  document.getElementById('bestWordDisp').innerText = '대표: ' + (best||'-');
-  document.getElementById('kwDisp').innerText = getAllWords().join(', ');
+});
 
-  // 계산 참여 점수 표시
-  var cntPct  = cntScoreData  ? Math.round(cntScoreData.correct  / cntScoreData.total  * 100) : 0;
-  var probPct = probScoreData ? Math.round(probScoreData.correct / probScoreData.total * 100) : 0;
-  var scoreH = '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">'
-    + '<div style="padding:8px 14px;border-radius:8px;background:#1e1e2e;font-size:12px">'
-    + '등장횟수 세기: <strong style="color:' + (cntPct===100?'#22c55e':'#eab308') + '">' + (cntScoreData?cntScoreData.correct+'/'+cntScoreData.total:'—') + '</strong></div>'
-    + '<div style="padding:8px 14px;border-radius:8px;background:#1e1e2e;font-size:12px">'
-    + '확률 계산: <strong style="color:' + (probPct>=80?'#22c55e':probPct>=50?'#eab308':'#ef4444') + '">' + (probScoreData?probScoreData.correct+'/'+probScoreData.total:'—') + '</strong></div>'
-    + '</div>';
-  document.getElementById('calcScores').innerHTML = scoreH;
+document.getElementById(‘testBody’).innerHTML = rows;
+document.getElementById(‘acc1’).innerText = ok1 + ‘/’ + TS.length;
+document.getElementById(‘acc2’).innerText = ok2 + ‘/’ + TS.length;
+var best = getBestWord();
+document.getElementById(‘bestWordDisp’).innerText = ‘대표: ’ + (best||’-’);
+document.getElementById(‘kwDisp’).innerText = getAllWords().join(’, ’);
 
-  var alreadySaved = roundLog.length > 0 && roundLog[roundLog.length-1].num === roundNum;
-  if (!alreadySaved) {
-    roundLog.push({ num:roundNum, keywords:getAllWords().slice(), acc1:ok1, acc2:ok2, best:best||'-' });
-  } else {
-    roundLog[roundLog.length-1] = { num:roundNum, keywords:getAllWords().slice(), acc1:ok1, acc2:ok2, best:best||'-' };
-  }
-  renderRoundLog();
-  return { ok1:ok1, ok2:ok2 };
+// 계산 참여 점수 표시
+var cntPct  = cntScoreData  ? Math.round(cntScoreData.correct  / cntScoreData.total  * 100) : 0;
+var probPct = probScoreData ? Math.round(probScoreData.correct / probScoreData.total * 100) : 0;
+var scoreH = ‘<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">’
++ ‘<div style="padding:8px 14px;border-radius:8px;background:#1e1e2e;font-size:12px">’
++ ‘등장횟수 세기: <strong style="color:' + (cntPct===100?'#22c55e':'#eab308') + '">’ + (cntScoreData?cntScoreData.correct+’/’+cntScoreData.total:’—’) + ‘</strong></div>’
++ ‘<div style="padding:8px 14px;border-radius:8px;background:#1e1e2e;font-size:12px">’
++ ‘확률 계산: <strong style="color:' + (probPct>=80?'#22c55e':probPct>=50?'#eab308':'#ef4444') + '">’ + (probScoreData?probScoreData.correct+’/’+probScoreData.total:’—’) + ‘</strong></div>’
++ ‘</div>’;
+document.getElementById(‘calcScores’).innerHTML = scoreH;
+
+var alreadySaved = roundLog.length > 0 && roundLog[roundLog.length-1].num === roundNum;
+if (!alreadySaved) {
+roundLog.push({ num:roundNum, keywords:getAllWords().slice(), acc1:ok1, acc2:ok2, best:best||’-’ });
+} else {
+roundLog[roundLog.length-1] = { num:roundNum, keywords:getAllWords().slice(), acc1:ok1, acc2:ok2, best:best||’-’ };
+}
+renderRoundLog();
+return { ok1:ok1, ok2:ok2 };
 }
 
 function renderRoundLog() {
-  var el = document.getElementById('roundLogBox'); if (!el) return;
-  if (roundLog.length <= 1) { el.innerHTML = ''; return; }
-  var h = '<div class="card"><div style="font-weight:700;color:#fff;margin-bottom:10px">📈 시도 기록</div>';
-  roundLog.forEach(function(r, i) {
-    var prev  = i > 0 ? roundLog[i-1] : null;
-    var delta = prev ? r.acc2 - prev.acc2 : 0;
-    var isCur = (i === roundLog.length-1);
-    var dHtml = '';
-    if (prev) {
-      if (delta>0)      dHtml = '<span class="up">&#9650;+' + delta + '</span>';
-      else if (delta<0) dHtml = '<span class="dn">&#9660;' + delta + '</span>';
-      else              dHtml = '<span class="eq">&rarr; 변화없음</span>';
-    }
-    h += '<div class="rbox" style="' + (isCur?'border:1px solid #ff4d57':'') + '">';
-    h += '<div class="rnum' + (isCur?' cur':'') + '">' + r.num + '</div>';
-    h += '<div style="flex:1">';
-    h += '<div style="font-size:12px;margin-bottom:3px">'
-      + r.keywords.map(function(w) {
-          return '<span class="wtag" style="' + (w===r.best?'border-color:#f97316;color:#f97316':'') + '">' + w + '</span>';
-        }).join('')
-      + '</div>';
-    h += '<div style="font-size:12px;color:#94a3b8">'
-      + '단일 <strong style="color:#f97316">' + r.acc1 + '/' + TS.length + '</strong>'
-      + ' &nbsp;|&nbsp; 복합 <strong style="color:#ff4d57">' + r.acc2 + '/' + TS.length + '</strong>'
-      + (dHtml ? ' &nbsp;' + dHtml : '')
-      + '</div></div>';
-    if (isCur) h += '<div style="font-size:11px;color:#ff4d57;font-weight:700">현재</div>';
-    h += '</div>';
-  });
-  h += '</div>';
-  el.innerHTML = h;
+var el = document.getElementById(‘roundLogBox’); if (!el) return;
+if (roundLog.length <= 1) { el.innerHTML = ‘’; return; }
+var h = ‘<div class="card"><div style="font-weight:700;color:#fff;margin-bottom:10px">📈 시도 기록</div>’;
+roundLog.forEach(function(r, i) {
+var prev  = i > 0 ? roundLog[i-1] : null;
+var delta = prev ? r.acc2 - prev.acc2 : 0;
+var isCur = (i === roundLog.length-1);
+var dHtml = ‘’;
+if (prev) {
+if (delta>0)      dHtml = ‘<span class="up">▲+’ + delta + ‘</span>’;
+else if (delta<0) dHtml = ‘<span class="dn">▼’ + delta + ‘</span>’;
+else              dHtml = ‘<span class="eq">→ 변화없음</span>’;
+}
+h += ‘<div class="rbox" style="' + (isCur?'border:1px solid #ff4d57':'') + '">’;
+h += ‘<div class="rnum' + (isCur?' cur':'') + '">’ + r.num + ‘</div>’;
+h += ‘<div style="flex:1">’;
+h += ‘<div style="font-size:12px;margin-bottom:3px">’
++ r.keywords.map(function(w) {
+return ‘<span class="wtag" style="' + (w===r.best?'border-color:#f97316;color:#f97316':'') + '">’ + w + ‘</span>’;
+}).join(’’)
++ ‘</div>’;
+h += ‘<div style="font-size:12px;color:#94a3b8">’
++ ‘단일 <strong style="color:#f97316">’ + r.acc1 + ‘/’ + TS.length + ‘</strong>’
++ ’  |  복합 <strong style="color:#ff4d57">’ + r.acc2 + ‘/’ + TS.length + ‘</strong>’
++ (dHtml ? ’  ’ + dHtml : ‘’)
++ ‘</div></div>’;
+if (isCur) h += ‘<div style="font-size:11px;color:#ff4d57;font-weight:700">현재</div>’;
+h += ‘</div>’;
+});
+h += ‘</div>’;
+el.innerHTML = h;
 }
 
 // === 제출 ===
 async function submitResult() {
-  if (!roundLog.length) { alert('테스트를 먼저 실행해 주세요.'); return; }
-  var last     = roundLog[roundLog.length-1];
-  var first    = roundLog[0];
-  var improved = last.acc2 - first.acc2;
-  var diff = EM.filter(function(e) {
-    var ml = lblMap[e.id];
-    return ml && ml !== 'unk' && ((ml==='spam') !== (e.official==='스팸'));
-  }).length;
+if (!roundLog.length) { alert(‘테스트를 먼저 실행해 주세요.’); return; }
+var last     = roundLog[roundLog.length-1];
+var first    = roundLog[0];
+var improved = last.acc2 - first.acc2;
+var diff = EM.filter(function(e) {
+var ml = lblMap[e.id];
+return ml && ml !== ‘unk’ && ((ml===‘spam’) !== (e.official===‘스팸’));
+}).length;
 
-  var result = {
-    team: teamName, keywords: last.keywords, bestWord: last.best,
-    acc1: last.acc1, acc2: last.acc2, total: TS.length,
-    roundCount: roundNum, improved: improved, rounds: roundLog,
-    labelDiff: diff,
-    cntScore:  cntScoreData  ? cntScoreData.correct  + '/' + cntScoreData.total  : '-',
-    probScore: probScoreData ? probScoreData.correct + '/' + probScoreData.total : '-',
-    time: new Date().toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit' })
-  };
-  try {
-    await fetch(SCRIPT_URL, {
-      method:'POST', mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(result)
-    });
-  } catch(e) {}
+var result = {
+team: teamName, keywords: last.keywords, bestWord: last.best,
+acc1: last.acc1, acc2: last.acc2, total: TS.length,
+roundCount: roundNum, improved: improved, rounds: roundLog,
+labelDiff: diff,
+cntScore:  cntScoreData  ? cntScoreData.correct  + ‘/’ + cntScoreData.total  : ‘-’,
+probScore: probScoreData ? probScoreData.correct + ‘/’ + probScoreData.total : ‘-’,
+time: new Date().toLocaleTimeString(‘ko-KR’, { hour:‘2-digit’, minute:‘2-digit’ })
+};
+try {
+await fetch(SCRIPT_URL, {
+method:‘POST’, mode:‘no-cors’,
+headers:{‘Content-Type’:‘application/json’},
+body: JSON.stringify(result)
+});
+} catch(e) {}
 
-  document.getElementById('submitMsg').innerText = teamName + ' 결과 제출 완료!';
-  document.getElementById('submitSub').innerText =
-    '최종: 단일 ' + last.acc1 + '/' + TS.length
-    + ' | 복합 ' + last.acc2 + '/' + TS.length
-    + ' | ' + roundNum + '회 시도'
-    + (improved > 0 ? ' | +' + improved + '점 향상!' : '');
-  goStep(6);
+document.getElementById(‘submitMsg’).innerText = teamName + ’ 결과 제출 완료!’;
+document.getElementById(‘submitSub’).innerText =
+‘최종: 단일 ’ + last.acc1 + ‘/’ + TS.length
++ ’ | 복합 ’ + last.acc2 + ‘/’ + TS.length
++ ’ | ’ + roundNum + ‘회 시도’
++ (improved > 0 ? ’ | +’ + improved + ‘점 향상!’ : ‘’);
+goStep(6);
 }
 
 // === 전체 결과 ===
 async function loadAllResults() {
-  var el = document.getElementById('allResultsOut');
-  el.innerHTML = '<div class="loading">결과를 불러오는 중... ⏳</div>';
-  var results = [];
-  try {
-    var resp = await fetch(SCRIPT_URL + '?t=' + Date.now());
-    var data = await resp.json();
-    if (data.ok && data.results) results = data.results;
-  } catch(e) {
-    el.innerHTML = '<div class="card" style="text-align:center;padding:24px;color:#ef4444">'
-      + '⚠ 결과를 불러오지 못했습니다.<br>'
-      + '<span style="font-size:12px;color:#555">SCRIPT_URL이 올바르게 설정되었는지 확인하세요.</span></div>';
-    return;
-  }
-  if (!results.length) {
-    el.innerHTML = '<div class="card" style="text-align:center;padding:32px;color:#475569">아직 제출된 팀이 없습니다.</div>';
-    return;
-  }
-  results.sort(function(a,b) { return b.acc2!==a.acc2 ? b.acc2-a.acc2 : b.acc1-a.acc1; });
-  var medals = ['🥇','🥈','🥉'];
-  var h = '';
+var el = document.getElementById(‘allResultsOut’);
+el.innerHTML = ‘<div class="loading">결과를 불러오는 중… ⏳</div>’;
+var results = [];
+try {
+var resp = await fetch(SCRIPT_URL + ‘?t=’ + Date.now());
+var data = await resp.json();
+if (data.ok && data.results) results = data.results;
+} catch(e) {
+el.innerHTML = ‘<div class="card" style="text-align:center;padding:24px;color:#ef4444">’
++ ‘⚠ 결과를 불러오지 못했습니다.<br>’
++ ‘<span style="font-size:12px;color:#555">SCRIPT_URL이 올바르게 설정되었는지 확인하세요.</span></div>’;
+return;
+}
+if (!results.length) {
+el.innerHTML = ‘<div class="card" style="text-align:center;padding:32px;color:#475569">아직 제출된 팀이 없습니다.</div>’;
+return;
+}
+results.sort(function(a,b) { return b.acc2!==a.acc2 ? b.acc2-a.acc2 : b.acc1-a.acc1; });
+var medals = [‘🥇’,‘🥈’,‘🥉’];
+var h = ‘’;
 
-  // 상위 3팀
-  h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:16px">';
-  results.slice(0,3).forEach(function(r,i) {
-    var col = i===0?'#ffd700':i===1?'#c0c0c0':'#cd7f32';
-    h += '<div class="card" style="text-align:center;border-color:'+col+'55">';
-    h += '<div style="font-size:24px;margin-bottom:4px">' + medals[i] + '</div>';
-    h += '<div style="font-weight:700;color:#fff;font-size:15px;margin-bottom:2px">' + r.team + '</div>';
-    h += '<div style="font-size:28px;font-weight:900;color:#ff4d57">' + r.acc2 + '/' + r.total + '</div>';
-    h += '<div style="font-size:11px;color:#555;margin-top:4px">' + r.roundCount + '회 시도</div>';
-    if (r.improved > 0) h += '<div style="font-size:11px;color:#22c55e;font-weight:700">&#9650;+' + r.improved + '점 향상</div>';
+// 상위 3팀
+h += ‘<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:16px">’;
+results.slice(0,3).forEach(function(r,i) {
+var col = i===0?’#ffd700’:i===1?’#c0c0c0’:’#cd7f32’;
+h += ‘<div class="card" style="text-align:center;border-color:'+col+'55">’;
+h += ‘<div style="font-size:24px;margin-bottom:4px">’ + medals[i] + ‘</div>’;
+h += ‘<div style="font-weight:700;color:#fff;font-size:15px;margin-bottom:2px">’ + r.team + ‘</div>’;
+h += ‘<div style="font-size:28px;font-weight:900;color:#ff4d57">’ + r.acc2 + ‘/’ + r.total + ‘</div>’;
+h += ‘<div style="font-size:11px;color:#555;margin-top:4px">’ + r.roundCount + ‘회 시도</div>’;
+if (r.improved > 0) h += ‘<div style="font-size:11px;color:#22c55e;font-weight:700">▲+’ + r.improved + ‘점 향상</div>’;
+h += ‘</div>’;
+});
+h += ‘</div>’;
+
+// 전체 비교표
+h += ‘<div class="card"><div style="overflow-x:auto"><table class="cmp-tbl"><thead><tr>’;
+h += ‘<th style="text-align:left">순위</th><th style="text-align:left">팀</th>’;
+h += ‘<th>최종 키워드</th><th>단일</th><th>나이브 베이즈</th>’;
+h += ‘<th>시도</th><th>향상</th>’;
+h += ‘<th style="color:#60a5fa">횟수 채점</th><th style="color:#a855f7">확률 채점</th>’;
+h += ‘</tr></thead><tbody>’;
+
+results.forEach(function(r,i) {
+var rank = i < 3 ? medals[i] : ((i+1)+‘위’);
+var pct2 = Math.round(r.acc2/r.total*100);
+var bc   = pct2>=80?’#22c55e’:pct2>=60?’#eab308’:’#ef4444’;
+h += ‘<tr>’;
+h += ‘<td style="font-size:18px">’ + rank + ‘</td>’;
+h += ‘<td style="font-weight:700;color:#fff;font-size:14px">’ + r.team + ‘</td>’;
+h += ‘<td style="text-align:left">’ + r.keywords.map(function(w) {
+return ‘<span class="wtag" style="' + (w===r.bestWord?'border-color:#f97316;color:#f97316':'') + '">’+(w===r.bestWord?‘★ ‘:’’)+w+’</span>’;
+}).join(’’) + ‘</td>’;
+h += ‘<td><span style="font-weight:700;color:#f97316">’ + r.acc1 + ‘/’ + r.total + ‘</span></td>’;
+h += ‘<td><div style="display:flex;align-items:center;gap:5px;justify-content:center">’
++ ‘<div style="width:36px;height:5px;background:#2a2a3e;border-radius:3px;overflow:hidden">’
++ ‘<div style="width:' + pct2 + '%;height:100%;background:' + bc + '"></div></div>’
++ ‘<span style="font-weight:700;color:' + bc + ';font-size:14px">’ + r.acc2 + ‘/’ + r.total + ‘</span></div></td>’;
+h += ‘<td><span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;background:rgba(234,179,8,.15);color:#eab308">’ + r.roundCount + ‘회</span></td>’;
+h += ‘<td><span style="font-weight:700;color:' + (r.improved>0?'#22c55e':r.improved<0?'#ef4444':'#94a3b8') + '">’ + (r.improved>0?’+’:’’) + r.improved + ‘</span></td>’;
+h += ‘<td style="color:#60a5fa;font-weight:700">’ + (r.cntScore||’—’) + ‘</td>’;
+h += ‘<td style="color:#a855f7;font-weight:700">’ + (r.probScore||’—’) + ‘</td>’;
+h += ‘</tr>’;
+
+```
+if (r.rounds && r.rounds.length > 1) {
+  h += '<tr><td colspan="9" style="padding:0 12px 8px;background:#0d0d14">';
+  h += '<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">';
+  var maxAcc = Math.max.apply(null, r.rounds.map(function(rd){return rd.acc2;}));
+  r.rounds.forEach(function(rd,ri) {
+    if (!rd) return;
+    var isBest = (rd.acc2 === maxAcc);
+    h += '<div style="padding:4px 9px;border-radius:6px;background:#1e1e2e;border:1px solid '+(isBest?'#ff4d57':'#2a2a3e')+';font-size:11px">';
+    h += rd.num+'회: <span style="color:#f97316">'+rd.acc1+'</span>/<span style="color:#ff4d57">'+rd.acc2+'</span>';
+    h += ' <span style="color:#555;font-size:10px">['+rd.keywords.join(',')+']</span>';
+    if (isBest) h += ' <span style="color:#ff4d57">★</span>';
     h += '</div>';
+    if (ri < r.rounds.length-1) h += '<span style="color:#2a2a3e">&rarr;</span>';
   });
-  h += '</div>';
-
-  // 전체 비교표
-  h += '<div class="card"><div style="overflow-x:auto"><table class="cmp-tbl"><thead><tr>';
-  h += '<th style="text-align:left">순위</th><th style="text-align:left">팀</th>';
-  h += '<th>최종 키워드</th><th>단일</th><th>나이브 베이즈</th>';
-  h += '<th>시도</th><th>향상</th>';
-  h += '<th style="color:#60a5fa">횟수 채점</th><th style="color:#a855f7">확률 채점</th>';
-  h += '</tr></thead><tbody>';
-
-  results.forEach(function(r,i) {
-    var rank = i < 3 ? medals[i] : ((i+1)+'위');
-    var pct2 = Math.round(r.acc2/r.total*100);
-    var bc   = pct2>=80?'#22c55e':pct2>=60?'#eab308':'#ef4444';
-    h += '<tr>';
-    h += '<td style="font-size:18px">' + rank + '</td>';
-    h += '<td style="font-weight:700;color:#fff;font-size:14px">' + r.team + '</td>';
-    h += '<td style="text-align:left">' + r.keywords.map(function(w) {
-      return '<span class="wtag" style="' + (w===r.bestWord?'border-color:#f97316;color:#f97316':'') + '">'+(w===r.bestWord?'★ ':'')+w+'</span>';
-    }).join('') + '</td>';
-    h += '<td><span style="font-weight:700;color:#f97316">' + r.acc1 + '/' + r.total + '</span></td>';
-    h += '<td><div style="display:flex;align-items:center;gap:5px;justify-content:center">'
-      + '<div style="width:36px;height:5px;background:#2a2a3e;border-radius:3px;overflow:hidden">'
-      + '<div style="width:' + pct2 + '%;height:100%;background:' + bc + '"></div></div>'
-      + '<span style="font-weight:700;color:' + bc + ';font-size:14px">' + r.acc2 + '/' + r.total + '</span></div></td>';
-    h += '<td><span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;background:rgba(234,179,8,.15);color:#eab308">' + r.roundCount + '회</span></td>';
-    h += '<td><span style="font-weight:700;color:' + (r.improved>0?'#22c55e':r.improved<0?'#ef4444':'#94a3b8') + '">' + (r.improved>0?'+':'') + r.improved + '</span></td>';
-    h += '<td style="color:#60a5fa;font-weight:700">' + (r.cntScore||'—') + '</td>';
-    h += '<td style="color:#a855f7;font-weight:700">' + (r.probScore||'—') + '</td>';
-    h += '</tr>';
-
-    if (r.rounds && r.rounds.length > 1) {
-      h += '<tr><td colspan="9" style="padding:0 12px 8px;background:#0d0d14">';
-      h += '<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">';
-      var maxAcc = Math.max.apply(null, r.rounds.map(function(rd){return rd.acc2;}));
-      r.rounds.forEach(function(rd,ri) {
-        if (!rd) return;
-        var isBest = (rd.acc2 === maxAcc);
-        h += '<div style="padding:4px 9px;border-radius:6px;background:#1e1e2e;border:1px solid '+(isBest?'#ff4d57':'#2a2a3e')+';font-size:11px">';
-        h += rd.num+'회: <span style="color:#f97316">'+rd.acc1+'</span>/<span style="color:#ff4d57">'+rd.acc2+'</span>';
-        h += ' <span style="color:#555;font-size:10px">['+rd.keywords.join(',')+']</span>';
-        if (isBest) h += ' <span style="color:#ff4d57">★</span>';
-        h += '</div>';
-        if (ri < r.rounds.length-1) h += '<span style="color:#2a2a3e">&rarr;</span>';
-      });
-      h += '</div></td></tr>';
-    }
-  });
-  h += '</tbody></table></div>';
-
-  if (results.length >= 2) {
-    var avgR = (results.reduce(function(a,r){return a+r.roundCount;},0)/results.length).toFixed(1);
-    var nbB  = results.filter(function(r){return r.acc2>r.acc1;}).length;
-    var imp  = results.filter(function(r){return r.improved>0;}).length;
-    h += '<div style="margin-top:12px;padding:12px;background:#1e1e2e;border-radius:8px;font-size:13px;color:#94a3b8;line-height:1.85">'
-      + '<strong style="color:#fff">💬 현장 토론 포인트</strong><br>'
-      + '• 평균 시도 횟수: <strong style="color:#eab308">' + avgR + '회</strong>'
-      + ' &nbsp;|&nbsp; 시도로 성능 향상: <strong style="color:#22c55e">' + imp + '팀</strong><br>'
-      + '• 나이브 베이즈 &gt; 단일 키워드 팀: <strong style="color:#ff4d57">' + nbB + '/' + results.length + '팀</strong><br>'
-      + '• 등장횟수·확률 채점 점수가 높은 팀과 낮은 팀의 성능 차이는?'
-      + '</div>';
-  }
-  h += '</div>';
-  el.innerHTML = h;
+  h += '</div></td></tr>';
 }
+```
 
-// === 사전 확률 슬라이더 ===
-function onPriorChange() {
-  var val = parseInt(document.getElementById('priorSlider').value);
-  priorS = val / 10;
-  var dS = document.getElementById('priorDisplay');
-  var dH = document.getElementById('priorHDisplay');
-  if (dS) dS.innerText = priorS.toFixed(1);
-  if (dH) dH.innerText = (1 - priorS).toFixed(1);
-  // 테스트 결과가 있으면 재계산
-  if (roundLog.length > 0) rerunTest();
+});
+h += ‘</tbody></table></div>’;
+
+if (results.length >= 2) {
+var avgR = (results.reduce(function(a,r){return a+r.roundCount;},0)/results.length).toFixed(1);
+var nbB  = results.filter(function(r){return r.acc2>r.acc1;}).length;
+var imp  = results.filter(function(r){return r.improved>0;}).length;
+h += ‘<div style="margin-top:12px;padding:12px;background:#1e1e2e;border-radius:8px;font-size:13px;color:#94a3b8;line-height:1.85">’
++ ‘<strong style="color:#fff">💬 현장 토론 포인트</strong><br>’
++ ‘• 평균 시도 횟수: <strong style="color:#eab308">’ + avgR + ‘회</strong>’
++ ’  |  시도로 성능 향상: <strong style="color:#22c55e">’ + imp + ‘팀</strong><br>’
++ ‘• 나이브 베이즈 > 단일 키워드 팀: <strong style="color:#ff4d57">’ + nbB + ‘/’ + results.length + ‘팀</strong><br>’
++ ‘• 등장횟수·확률 채점 점수가 높은 팀과 낮은 팀의 성능 차이는?’
++ ‘</div>’;
 }
-
-function rerunTest() {
-  var allW = getAllWords();
-  if (!allW.length) return;
-  var ok1 = 0, ok2 = 0, rows = '', changedRows = [];
-  // 기준: priorS=0.5 일 때의 판정
-  var savedPrior = priorS;
-  var baseRows = {};
-  priorS = 0.5;
-  TS.forEach(function(e) {
-    var pct = classifyNB(e.words);
-    baseRows[e.id] = pct >= 50 ? '스팸' : '정상';
-  });
-  priorS = savedPrior;
-
-  TS.forEach(function(e) {
-    var isSpam = (e.label === '스팸');
-    var badge  = isSpam ? '<span class="bs">스팸</span>' : '<span class="bh">정상</span>';
-    var sr  = classifySingle(e.words);
-    var sc  = (sr.label === e.label); if (sc) ok1++;
-    var pct = classifyNB(e.words), nbL = pct >= 50 ? '스팸' : '정상';
-    var nc  = (nbL === e.label); if (nc) ok2++;
-    var changed = (sr.label !== nbL);
-    var priorChanged = (baseRows[e.id] !== nbL);
-    var hit = e.words.filter(function(w) { return allW.indexOf(w) >= 0; });
-    if (priorChanged) changedRows.push({ e: e, old: baseRows[e.id], now: nbL, correct: nc });
-
-    var rowStyle = priorChanged ? 'background:rgba(234,179,8,.07);outline:2px solid #eab308' : changed ? 'background:rgba(234,179,8,.04)' : '';
-    rows += '<tr style="' + rowStyle + '">';
-    rows += '<td style="font-size:11px;color:#555">' + e.id + '</td>';
-    rows += '<td>' + e.text + (priorChanged ? ' <span style="color:#eab308;font-weight:700">↺</span>' : changed ? ' <span style="color:#eab308">&#9650;</span>' : '') + '</td>';
-    rows += '<td>' + badge + '</td>';
-    rows += '<td>' + e.words.map(function(w){return '<span class="wtag">'+w+'</span>';}).join('') + '</td>';
-    var sjc=sr.label==='스팸'?'#ef4444':'#22c55e', stc=sc?'#22c55e':'#ef4444';
-    rows += '<td style="text-align:center">'
-      + '<div style="font-size:10px;color:#f97316;margin-bottom:2px">' + sr.best + (sr.hit?' ✓':' ✗') + '</div>'
-      + '<span style="font-weight:700;color:'+sjc+'">' + sr.label + '</span> '
-      + '<span style="color:'+stc+'">' + (sc?'✓':'✗') + '</span></td>';
-    rows += '<td style="text-align:center;font-family:monospace;font-size:12px">' + sr.pct.toFixed(1) + '%</td>';
-    var njc=nbL==='스팸'?'#ef4444':'#22c55e', ntc=nc?'#22c55e':'#ef4444';
-    rows += '<td style="text-align:center;' + (priorChanged?'background:rgba(234,179,8,.15)':changed?'background:rgba(234,179,8,.08)':'') + '">';
-    if (priorChanged) rows += '<div style="font-size:9px;color:#eab308;font-weight:700">↺ 판정 바뀜</div>';
-    else if (changed) rows += '<div style="font-size:9px;color:#eab308">&#9650;바뀜</div>';
-    rows += '<span style="font-weight:700;color:'+njc+'">' + nbL + '</span> '
-      + '<span style="color:'+ntc+'">' + (nc?'✓':'✗') + '</span>'
-      + (hit.length ? '<div style="font-size:10px;color:#ff4d57">' + hit.join(',') + '</div>' : '')
-      + '</td>';
-    rows += '<td style="text-align:center;font-family:monospace;font-size:12px;'
-      + (priorChanged?'background:rgba(234,179,8,.15)':changed?'background:rgba(234,179,8,.08)':'')
-      + '">' + pct.toFixed(1) + '%</td>';
-    rows += '</tr>';
-  });
-
-  document.getElementById('testBody').innerHTML = rows;
-  document.getElementById('acc1').innerText = ok1 + '/' + TS.length;
-  document.getElementById('acc2').innerText = ok2 + '/' + TS.length;
-  var cc = document.getElementById('changedCount');
-  if (cc) cc.innerText = changedRows.length ? changedRows.length + '개' : '없음';
-
-  // 판정 바뀐 이메일 요약
-  var boxEl = document.getElementById('priorChangedBox');
-  if (boxEl) {
-    if (!changedRows.length) { boxEl.innerHTML = ''; }
-    else {
-      var bh = '<div style="margin-top:4px">';
-      bh += '<div style="font-size:12px;font-weight:700;color:#eab308;margin-bottom:6px">'
-        + '↺ P(스팸)=' + priorS.toFixed(1) + '로 바꿨을 때 판정이 바뀐 이메일</div>';
-      changedRows.forEach(function(x) {
-        var nc2 = (x.now === x.e.label);
-        bh += '<div style="padding:7px 12px;background:#1e1e2e;border-radius:7px;margin-bottom:4px;'
-          + 'border-left:3px solid #eab308;font-size:12px">';
-        bh += '<strong style="color:#fff">' + x.e.id + '</strong> &ldquo;' + x.e.text + '&rdquo;<br>';
-        bh += 'P(스팸)=0.5일 때: <span style="color:' + (x.old==='스팸'?'#ef4444':'#22c55e') + ';font-weight:700">' + x.old + '</span>';
-        bh += ' &rarr; 현재: <span style="color:' + (x.now==='스팸'?'#ef4444':'#22c55e') + ';font-weight:700">' + x.now + '</span>';
-        bh += ' <span style="color:' + (nc2?'#22c55e':'#ef4444') + ';font-weight:700">' + (nc2?'✓ 정답':'✗ 오답') + '</span>';
-        bh += '</div>';
-      });
-      bh += '</div>';
-      boxEl.innerHTML = bh;
-    }
-  }
+h += ‘</div>’;
+el.innerHTML = h;
 }
 
 // === 리셋 ===
 function resetAll() {
-  teamName=''; lblMap={}; lblLocked=false;
-  selIdx=[]; custList=[]; roundNum=0; roundLog=[];
-  cntScoreData=null; probScoreData=null;
-  document.querySelectorAll('.tbtn').forEach(function(b){b.classList.remove('sel');});
-  var ta=document.getElementById('teamAlias'); if(ta) ta.value='';
-  var np=document.getElementById('namePreview'); if(np) np.innerText='—';
-  pickedNum=0;
-  var sb=document.getElementById('startBtn'); if(sb){sb.disabled=true;sb.style.opacity='0.35';}
-  EM.forEach(function(e){
-    ['spam','ham','unk'].forEach(function(k){
-      var btn=document.getElementById('lb_'+e.id+'_'+k);
-      if(btn) btn.className='lbtn';
-    });
-  });
-  var lc=document.getElementById('lcnt'); if(lc) lc.innerText='0';
-  clearKeywords();
-  enableLabelBack();
-  priorS = 0.5;
-  var sl2=document.getElementById('priorSlider'); if(sl2) sl2.value=5;
-  var dS2=document.getElementById('priorDisplay'); if(dS2) dS2.innerText='0.5';
-  var dH2=document.getElementById('priorHDisplay'); if(dH2) dH2.innerText='0.5';
-  var cc2=document.getElementById('changedCount'); if(cc2) cc2.innerText='—';
-  var pb2=document.getElementById('priorChangedBox'); if(pb2) pb2.innerHTML='';
-  ['prevRound','roundLogBox','countContent','probContent','calcScores'].forEach(function(id){
-    var el=document.getElementById(id); if(el) el.innerHTML='';
-  });
-  goStep(0);
+teamName=’’; lblMap={}; lblLocked=false;
+selIdx=[]; custList=[]; roundNum=0; roundLog=[];
+cntScoreData=null; probScoreData=null;
+document.querySelectorAll(’.tbtn’).forEach(function(b){b.classList.remove(‘sel’);});
+var cn=document.getElementById(‘customName’); if(cn) cn.value=’’;
+var sb=document.getElementById(‘startBtn’); if(sb){sb.disabled=true;sb.style.opacity=‘0.35’;}
+EM.forEach(function(e){
+[‘spam’,‘ham’,‘unk’].forEach(function(k){
+var btn=document.getElementById(‘lb_’+e.id+’_’+k);
+if(btn) btn.className=‘lbtn’;
+});
+});
+var lc=document.getElementById(‘lcnt’); if(lc) lc.innerText=‘0’;
+clearKeywords();
+enableLabelBack();
+// 진행 버튼 초기화
+var tp=document.getElementById(‘toProb’); if(tp){tp.disabled=true;tp.style.opacity=‘0.35’;}
+var tt=document.getElementById(‘toTest’); if(tt){tt.disabled=true;tt.style.opacity=‘0.35’;}
+[‘prevRound’,‘roundLogBox’,‘countContent’,‘probContent’,‘calcScores’].forEach(function(id){
+var el=document.getElementById(id); if(el) el.innerHTML=’’;
+});
+goStep(0);
 }
 
 </script>
